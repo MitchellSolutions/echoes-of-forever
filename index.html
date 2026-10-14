@@ -309,7 +309,7 @@
       86% { transform: scale(.98,1.04) skewX(1deg); }
     }
     @keyframes haloPulse { 0%,100% { opacity: .85; transform: scale(1); } 40% { opacity: 1; transform: scale(1.06); } 70% { opacity: .78; transform: scale(.97); } }
-    .candle-tip { position: absolute; transform: translate(-50%, -150%); white-space: nowrap; padding: 4px 9px; border-radius: 999px;
+    .candle-tip { position: absolute; z-index: 50; transform: translate(-50%, -330%); white-space: nowrap; padding: 4px 9px; border-radius: 999px;
       background: rgba(11,15,28,.85); border: 1px solid rgba(250,248,243,.16); font-size: .74rem; color: #f0eee8; pointer-events: none; opacity: 0; transition: opacity .3s; }
     .candle-tip.on { opacity: 1; }
     .candle-note { margin: 0; font-size: .82rem; color: var(--muted, rgba(250,248,243,.6)); }
@@ -2008,19 +2008,27 @@
         const mine = store.get();
         const mineT = new Set(mine.map(m => m.t));
         const all = online ? shared : mine;
+        const shown = all.slice(innerWidth < 600 ? -30 : -60);                       // only the 60 most recent glow; the count keeps the full total
         const seen = new Set();
-        all.concat(mine).forEach(c => { const key = c.t + '|' + c.n; if (seen.has(key)) return; seen.add(key); place(sky, c, mineT.has(c.t), c.t === newT); });
+        shown.concat(mine.slice(-10)).forEach(c => { const key = c.t + '|' + c.n; if (seen.has(key)) return; seen.add(key); place(sky, c, mineT.has(c.t), c.t === newT); });
         const note = document.getElementById('candleNote');
         if (note) note.textContent = online
           ? (all.length ? `${all.length} ${all.length === 1 ? 'light has' : 'lights have'} been lit here in remembrance.` : 'Be the first to light a candle here.')
           : (mine.length ? 'Your candles are kept here on this device.' : 'Light a candle for someone you carry with you.');
+      }
+      let tipTimer;
+      function showName(c, ms) {
+        const tip = document.getElementById('candleTip'); if (!c || !tip) return;
+        tip.textContent = c.dataset.n; tip.style.left = c.style.left; tip.style.top = c.style.top; tip.classList.add('on');
+        clearTimeout(tipTimer); tipTimer = setTimeout(() => tip.classList.remove('on'), ms);
       }
       function bind() {
         const form = document.getElementById('candleForm'), sky = document.getElementById('candleSky');
         if (!form || !sky) return;
         sky.addEventListener('pointerover', e => { const c = e.target.closest('.candle'); const tip = document.getElementById('candleTip'); if (!c || !tip) return;
           tip.textContent = c.dataset.n; tip.style.left = c.style.left; tip.style.top = c.style.top; tip.classList.add('on'); });
-        sky.addEventListener('pointerout', () => document.getElementById('candleTip')?.classList.remove('on'));
+        sky.addEventListener('pointerout', e => { if (e.pointerType === 'mouse') document.getElementById('candleTip')?.classList.remove('on'); });
+        sky.addEventListener('click', e => { const c = e.target.closest('.candle'); if (c) showName(c, 3500); });
         form.addEventListener('submit', async e => {
           e.preventDefault();
           const input = document.getElementById('candleName');
@@ -2032,6 +2040,7 @@
                   if (r.ok) { const d = await r.json(); shared = d.candles || shared; const last = shared[shared.length - 1]; if (last) { mine[mine.length - 1].t = last.t; store.set(mine); c.t = last.t; } } } catch {}
           }
           render(c.t);
+          showName(document.querySelector('#candleSky .candle.new'), 6000);
         });
         fetch(API).then(r => r.ok ? r.json() : Promise.reject()).then(d => { online = true; shared = d.candles || []; render(); }).catch(() => render());
         render();
