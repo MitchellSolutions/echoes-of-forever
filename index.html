@@ -1,0 +1,2174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Echoes of Forever Art | An Infinite Gallery for the Love That Never Leaves</title>
+  <meta name="description" content="Echoes of Forever Art is a cinematic emotional art sanctuary for memory, love, loss, eternity, and the hearts that remember." />
+  <meta name="theme-color" content="#0B0F1C" />
+
+  <!-- Elegant type pairing. Remove these imports if you need a fully offline file. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /*
+      ECHOES OF FOREVER ART — CINEMATIC EXPERIENCE
+      --------------------------------------------------
+      EDITING GUIDE:
+      1. Replace CTA links in CONFIG inside the JavaScript.
+      2. Replace artwork image slots in CONFIG.imageSlots.
+      3. Edit gate copy in CONFIG.gates.
+      4. Adjust palette below in :root.
+    */
+
+    :root {
+      --black: #0B0F1C;
+      --black-2: #0E1324;
+      --midnight: #18203A;
+      --midnight-2: #121A30;
+      --ivory: #FAF8F3;
+      --ivory-soft: rgba(250,248,243,0.76);
+      --muted: rgba(250,248,243,0.62);
+      --gold: #E2B85A;
+      --gold-2: #F6E1A0;
+      --bronze: #B8862E;
+      --crimson: #C9973A;
+      --silver: #A0BCE4;
+      --line: rgba(250,248,243,0.16);
+      --line-gold: rgba(232,196,106,0.38);
+      --panel: rgba(11,15,28,0.68);
+      --panel-strong: rgba(11,15,28,0.9);
+      --shadow: 0 24px 80px rgba(5,8,18,0.45);
+      --serif: "Cormorant Garamond", Georgia, serif;
+      --sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --ease: cubic-bezier(.2, .75, .15, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--black);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--ivory);
+      font-family: var(--sans);
+      background:
+        radial-gradient(ellipse at 50% -10%, rgba(250,248,243,0.20), transparent 45%),
+        radial-gradient(circle at 82% 18%, rgba(160,188,228,0.16), transparent 35%),
+        radial-gradient(circle at 18% 82%, rgba(160,188,228,0.13), transparent 38%),
+        linear-gradient(180deg, var(--black), var(--black-2));
+    }
+
+    body.locked { overflow: hidden; }
+
+    a { color: inherit; text-decoration: none; }
+    button, input, textarea { font: inherit; }
+
+    ::selection {
+      color: #0E1324;
+      background: var(--gold-2);
+    }
+
+    .app {
+      position: relative;
+      min-height: 100vh;
+      isolation: isolate;
+    }
+
+    /* Background atmosphere */
+    #three-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -5;
+      opacity: 0.72;
+      pointer-events: none;
+    }
+
+    .bg-stage {
+      position: fixed;
+      inset: 0;
+      z-index: -8;
+      overflow: hidden;
+      pointer-events: none;
+      background: var(--black);
+    }
+
+    .bg-layer {
+      position: absolute;
+      inset: -8vh -8vw;
+      opacity: 0;
+      transform: scale(1.07);
+      background-position: center;
+      background-size: cover;
+      filter: saturate(0.95) contrast(1.02) brightness(0.92);
+      transition: opacity 1300ms var(--ease), transform 10000ms linear, filter 1300ms var(--ease);
+    }
+
+    .bg-layer.active {
+      opacity: 1;
+      transform: scale(1.16) translate3d(-1.5vw, -1.5vh, 0);
+    }
+
+    .veil {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 40%, transparent 0 30%, rgba(5,8,18,.10) 55%, rgba(5,8,18,.48) 100%),
+        linear-gradient(180deg, rgba(11,15,28,.08), rgba(11,15,28,.55));
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      opacity: 0.035;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+    }
+
+    /* Intro / loading */
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(circle at 50% 44%, rgba(206,212,224,.12), transparent 34%),
+        linear-gradient(180deg, #0B0F1C, #0E1324 52%, #090D19);
+      transition: opacity 900ms var(--ease), visibility 900ms var(--ease);
+    }
+
+    .loader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .portal-card {
+      width: min(680px, 94vw);
+      padding: clamp(28px, 5vw, 62px);
+      text-align: center;
+      border: 1px solid var(--line-gold);
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(250,248,243,.075), rgba(250,248,243,.026)),
+        rgba(11,15,28,.78);
+      box-shadow: var(--shadow), inset 0 0 70px rgba(206,212,224,.045);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portal-card::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(240,238,232,.22), transparent 36%),
+        linear-gradient(90deg, transparent, rgba(250,248,243,.15), transparent);
+      opacity: .7;
+      pointer-events: none;
+    }
+
+    .sigil {
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 22px;
+      border: 1px solid rgba(240,238,232,.45);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--gold-2);
+      box-shadow: 0 0 42px rgba(206,212,224,.13);
+      position: relative;
+    }
+
+    .sigil::before, .sigil::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border: 1px solid rgba(160,188,228,.20);
+      border-radius: 50%;
+    }
+
+    .sigil::after {
+      inset: 28px;
+      border-color: rgba(160,188,228,0.35);
+      transform: rotate(45deg);
+      border-radius: 20px;
+    }
+
+    .sigil span {
+      font-family: var(--serif);
+      font-size: 2.9rem;
+      line-height: 1;
+      z-index: 1;
+    }
+
+
+    /* living sigil: breathes, turns slowly, and sends out echoes */
+    .sigil { animation: sigilBreathe 6s ease-in-out infinite; isolation: isolate; }
+    @keyframes sigilBreathe {
+      0%,100% { transform: scale(1); box-shadow: 0 0 42px rgba(206,212,224,.13); border-color: rgba(240,238,232,.45); }
+      50% { transform: scale(1.045); box-shadow: 0 0 70px rgba(206,212,224,.28), 0 0 140px rgba(160,188,228,.12); border-color: rgba(240,238,232,.75); }
+    }
+    .sigil::before { border-style: dashed; border-color: rgba(160,188,228,.32); animation: sigilTurn 48s linear infinite; }
+    .sigil::after { animation: sigilCounter 72s linear infinite; }
+    @keyframes sigilTurn { to { transform: rotate(360deg); } }
+    @keyframes sigilCounter { from { transform: rotate(45deg); } to { transform: rotate(-315deg); } }
+    .sigil .halo { position: absolute; inset: -6px; border-radius: 50%; z-index: -1;
+      background: conic-gradient(from 0deg, transparent 0 70%, rgba(250,248,243,.55) 80%, transparent 90%);
+      -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%, #000 64%, transparent 66%); mask: radial-gradient(circle, transparent 58%, #000 60%, #000 64%, transparent 66%);
+      animation: sigilTurn 9s linear infinite; opacity: .8; }
+    .sigil .echo { position: absolute; inset: -1px; border-radius: 50%; border: 1px solid rgba(206,212,224,.5); opacity: 0; pointer-events: none;
+      animation: sigilEcho 6s ease-out infinite; }
+    .sigil .echo:nth-child(2) { animation-delay: 2s; }
+    .sigil .echo:nth-child(3) { animation-delay: 4s; }
+    @keyframes sigilEcho { 0% { transform: scale(1); opacity: .55; } 100% { transform: scale(2.6); opacity: 0; } }
+    .sigil span { color: transparent; background: linear-gradient(110deg, #CED4E0 20%, #FFFFFF 40%, #A0BCE4 55%, #CED4E0 75%) 0 0 / 250% 100%;
+      -webkit-background-clip: text; background-clip: text; animation: sigilShine 6s ease-in-out infinite, infinityTurn 9s cubic-bezier(.45,0,.55,1) infinite; filter: drop-shadow(0 0 10px rgba(206,212,224,.35)); display: inline-block; transform-style: preserve-3d; }
+    .sigil { perspective: 320px; }
+    @keyframes infinityTurn { 0% { transform: rotateY(0deg); } 50% { transform: rotateY(180deg) scale(1.06); } 100% { transform: rotateY(360deg); } }
+    @keyframes sigilShine { 0%,100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
+    /* on entering: the sigil blooms outward before the gallery opens */
+    .loader.blooming .sigil { animation: sigilBloom 1.1s cubic-bezier(.2,.7,.2,1) forwards; }
+    .loader.blooming .sigil .echo { animation: sigilEcho 1.1s ease-out forwards; }
+    .loader.blooming .sigil .echo:nth-child(2) { animation-delay: .12s; }
+    .loader.blooming .sigil .echo:nth-child(3) { animation-delay: .24s; }
+    @keyframes sigilBloom { 40% { transform: scale(1.15); box-shadow: 0 0 120px rgba(240,238,232,.55), 0 0 260px rgba(160,188,228,.3); } 100% { transform: scale(1.35); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .sigil, .sigil::before, .sigil::after, .sigil .halo, .sigil .echo, .sigil span { animation: none !important; }
+    }
+
+
+    /* echo touch: a silver ripple wherever the visitor touches */
+    .echo-layer { position: fixed; inset: 0; z-index: 200; pointer-events: none; overflow: hidden; }
+    .echo-ring { position: absolute; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%;
+      border: 1px solid rgba(240,238,232,.7); box-shadow: 0 0 12px rgba(206,212,224,.35);
+      animation: echoRing 1.6s cubic-bezier(.2,.7,.2,1) forwards; }
+    .echo-ring.b { animation-delay: .18s; opacity: 0; border-color: rgba(160,188,228,.55); }
+    @keyframes echoRing { 0% { transform: scale(.4); opacity: .9; } 100% { transform: scale(7); opacity: 0; } }
+
+    /* whispered lines drifting through the dark */
+    .whispers { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
+    .whisper { position: absolute; max-width: min(34ch, 80vw); font-family: var(--serif); font-style: italic;
+      font-size: clamp(1.05rem, 1.6vw, 1.4rem); color: rgba(240,238,232,.0); letter-spacing: .02em;
+      transition: color 2.4s ease, transform 9s linear, filter 2.4s ease; filter: blur(3px); transform: translateY(6px); }
+    .whisper.on { color: rgba(240,238,232,.34); filter: blur(0); transform: translateY(-10px); }
+
+    /* light a candle */
+    .candles { margin-top: 26px; display: grid; gap: 14px; }
+    .candle-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .candle-form input { flex: 1 1 200px; min-width: 0; padding: 13px 16px; border-radius: 999px; border: 1px solid var(--line, rgba(250,248,243,.16));
+      background: rgba(11,15,28,.55); color: var(--pearl, #FAF8F3); font: inherit; }
+    .candle-form input:focus { outline: none; border-color: rgba(160,188,228,.6); }
+    .candle-sky { position: relative; height: 210px; border-radius: 18px; overflow: hidden; border: 1px solid rgba(250,248,243,.10);
+      background: radial-gradient(ellipse at 50% 120%, rgba(160,188,228,.16), transparent 60%), rgba(8,11,22,.55); }
+    .candle { position: absolute; width: 14px; height: 46px; margin: -38px 0 0 -7px; cursor: default; }
+    .candle .wax { position: absolute; left: 0; bottom: 0; width: 14px; height: 26px; border-radius: 3px 3px 2px 2px / 4px 4px 2px 2px;
+      background: linear-gradient(90deg, #b9ad95, #efe6d2 30%, #fffaf0 48%, #e6dbc4 70%, #a99c83);
+      box-shadow: inset 0 4px 4px -3px rgba(255,214,150,.9), 0 2px 6px rgba(0,0,0,.45); }
+    .candle .wax::before { content: ""; position: absolute; top: -2px; left: 1px; right: 1px; height: 5px; border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 40%, #fff6dc, #eadbb8 70%); }
+    .candle .wax::after { content: ""; position: absolute; top: 1px; left: 3px; width: 2px; height: 7px; border-radius: 0 0 2px 2px; background: #f7efdc; opacity: .8; }
+    .candle .wick { position: absolute; left: 50%; bottom: 25px; width: 1.6px; height: 5px; margin-left: -.8px; border-radius: 1px; background: linear-gradient(#1a120a, #3a2a18); }
+    .candle .flame { position: absolute; left: 50%; bottom: 28px; width: 9px; height: 20px; margin-left: -4.5px;
+      border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; transform-origin: 50% 92%;
+      background:
+        radial-gradient(ellipse 40% 22% at 50% 88%, rgba(110,150,255,.7), rgba(110,150,255,0) 100%),
+        radial-gradient(ellipse 34% 46% at 50% 66%, #fffef6 0 35%, rgba(255,250,230,0) 100%),
+        radial-gradient(ellipse 60% 75% at 50% 62%, #ffe7a3 0 30%, #ffb648 58%, rgba(255,120,30,0) 85%);
+      filter: blur(.35px); animation: flicker 1.9s ease-in-out infinite; }
+    .candle .halo { position: absolute; left: 50%; bottom: 14px; width: 84px; height: 84px; margin-left: -42px; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(255,196,120,.34), rgba(255,170,90,.12) 38%, rgba(255,170,90,0) 70%);
+      animation: haloPulse 2.6s ease-in-out infinite; mix-blend-mode: screen; }
+    .candle.mine .halo { background: radial-gradient(circle, rgba(255,206,140,.48), rgba(255,175,95,.16) 40%, rgba(255,170,90,0) 72%); }
+    .candle.new { animation: candleIn 1.4s ease forwards; }
+    @keyframes candleIn { from { opacity: 0; transform: translateY(8px) scale(.7); } to { opacity: 1; transform: none; } }
+    @keyframes flicker {
+      0%,100% { transform: scale(1,1) skewX(0deg); opacity: 1; }
+      18% { transform: scale(.95,1.06) skewX(2.5deg); }
+      34% { transform: scale(1.04,.94) skewX(-2deg); opacity: .94; }
+      52% { transform: scale(.97,1.09) skewX(1.5deg); }
+      70% { transform: scale(1.02,.96) skewX(-1deg); opacity: .97; }
+      86% { transform: scale(.98,1.04) skewX(1deg); }
+    }
+    @keyframes haloPulse { 0%,100% { opacity: .85; transform: scale(1); } 40% { opacity: 1; transform: scale(1.06); } 70% { opacity: .78; transform: scale(.97); } }
+    .candle-tip { position: absolute; transform: translate(-50%, -150%); white-space: nowrap; padding: 4px 9px; border-radius: 999px;
+      background: rgba(11,15,28,.85); border: 1px solid rgba(250,248,243,.16); font-size: .74rem; color: #f0eee8; pointer-events: none; opacity: 0; transition: opacity .3s; }
+    .candle-tip.on { opacity: 1; }
+    .candle-note { margin: 0; font-size: .82rem; color: var(--muted, rgba(250,248,243,.6)); }
+    @media (prefers-reduced-motion: reduce) { .candle .flame, .candle .halo, .echo-ring { animation: none !important; } .whispers { display: none; } }
+
+
+
+
+
+    /* infinity made of tiny diamonds */
+    .sigil .diamond-inf { position: absolute; left: -14px; top: -14px; z-index: 1; width: 140px; height: 140px; filter: drop-shadow(0 0 5px rgba(206,222,255,.4)); }
+    .sigil.diamonds { border-color: transparent !important; }
+    .sigil.diamonds::before, .sigil.diamonds::after { display: none; }
+
+
+    /* drama: a gold shimmer ring just outside the circle, and a cloudy gold aura spreading through the card */
+    .sigil .goldring { position: absolute; inset: -9px; border-radius: 50%; z-index: -1; pointer-events: none;
+      background: conic-gradient(from 0deg, rgba(232,196,106,0) 0deg, rgba(255,236,170,.95) 40deg, rgba(201,151,58,.2) 90deg, rgba(232,196,106,0) 140deg,
+                  rgba(255,228,150,.8) 210deg, rgba(232,196,106,0) 270deg, rgba(255,240,190,.9) 320deg, rgba(232,196,106,0) 360deg);
+      -webkit-mask: radial-gradient(circle, transparent 60%, #000 62%, #000 70%, transparent 74%); mask: radial-gradient(circle, transparent 60%, #000 62%, #000 70%, transparent 74%);
+      filter: blur(.6px) drop-shadow(0 0 8px rgba(255,214,120,.7)); animation: sigilTurn 7s linear infinite; }
+    .sigil .aura { position: absolute; left: 50%; top: 50%; width: 640px; height: 640px; margin: -320px; border-radius: 50%; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,222,145,.62) 0 10%, rgba(236,192,100,.36) 19%, rgba(205,155,60,.16) 34%, transparent 56%),
+        radial-gradient(ellipse 34% 22% at 30% 42%, rgba(240,200,120,.34), transparent 70%),
+        radial-gradient(ellipse 30% 26% at 70% 60%, rgba(255,214,140,.28), transparent 70%),
+        radial-gradient(ellipse 26% 34% at 56% 26%, rgba(220,170,80,.24), transparent 70%),
+        radial-gradient(ellipse 36% 20% at 40% 74%, rgba(250,210,130,.22), transparent 70%);
+      filter: blur(14px); mix-blend-mode: screen; animation: auraDrift 18s ease-in-out infinite, auraBreathe 6s ease-in-out infinite; }
+    @keyframes auraDrift { 0% { rotate: 0deg; } 50% { rotate: 180deg; } 100% { rotate: 360deg; } }
+    @keyframes auraBreathe { 0%,100% { transform: scale(.92); opacity: .75; } 50% { transform: scale(1.12); opacity: 1; } }
+    .sigil .echo { border-color: rgba(240,206,130,.55); }
+    .loader.blooming .sigil .aura { animation: auraBloom 1.1s ease-out forwards; }
+    @keyframes auraBloom { to { transform: scale(2.4); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .sigil .goldring, .sigil .aura { animation: none !important; } }
+
+
+    /* Gate 01: an open door with gold light pouring through */
+    .memory-stone.has-door { background: #0d0a06 !important; border: 2px solid rgba(232,196,106,.6);
+      box-shadow: 0 0 90px rgba(255,200,110,.38), 0 0 200px rgba(255,190,90,.16), inset 0 0 0 6px rgba(40,28,12,.9), inset 0 0 0 7px rgba(232,196,106,.35); }
+    .door-way { position: absolute; inset: 8px; border-radius: inherit; overflow: hidden; perspective: 600px;
+      background: radial-gradient(ellipse 70% 60% at 50% 66%, #fffaf0 0, #ffe7a8 16%, #f2c262 38%, #b98232 66%, #4d3312 100%); }
+    .dw-light { position: absolute; inset: 0; background: radial-gradient(ellipse 55% 45% at 50% 64%, rgba(255,252,235,.95), rgba(255,236,180,.35) 45%, transparent 75%);
+      animation: dwGlow 5s ease-in-out infinite; mix-blend-mode: screen; }
+    @keyframes dwGlow { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
+    .dw-rays { position: absolute; left: -40%; right: -40%; top: -10%; bottom: -10%;
+      background: repeating-conic-gradient(from 0deg at 50% 64%, rgba(255,246,214,.38) 0 3deg, transparent 3deg 11deg);
+      -webkit-mask: radial-gradient(ellipse at 50% 64%, #000 10%, transparent 62%); mask: radial-gradient(ellipse at 50% 64%, #000 10%, transparent 62%);
+      filter: blur(3px); mix-blend-mode: screen; animation: dwRays 30s linear infinite; }
+    @keyframes dwRays { to { rotate: 360deg; } }
+    .dw-dust { position: absolute; inset: -20% 0; opacity: .8; mix-blend-mode: screen;
+      background-image: radial-gradient(circle, rgba(255,248,225,.95) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(255,236,190,.7) 0 .8px, transparent 1.3px);
+      background-size: 37px 41px, 23px 29px; background-position: 0 0, 11px 7px; animation: dwDust 14s linear infinite; }
+    @keyframes dwDust { to { background-position: 18px -260px, -9px -180px; } }
+    .dw-leaf { position: absolute; left: 0; top: 0; bottom: 0; width: 100%; border-radius: 48% 48% 0 0 / 38% 38% 0 0; transform-origin: 0 50%;
+      transform: rotateY(-70deg);
+      background: linear-gradient(90deg, #2a1a0c, #4a2f17 40%, #3a2412 70%, #1d1208);
+      box-shadow: inset -6px 0 14px rgba(255,200,120,.35), inset 0 0 0 2px rgba(120,80,35,.6); }
+    .dw-leaf b { position: absolute; left: 14%; right: 14%; border: 1px solid rgba(180,130,60,.45); border-radius: 4px; box-shadow: inset 0 0 8px rgba(0,0,0,.6); }
+    .dw-leaf b:nth-child(1) { top: 16%; height: 30%; border-radius: 40% 40% 4px 4px / 30% 30% 4px 4px; }
+    .dw-leaf b:nth-child(2) { top: 54%; height: 34%; }
+    .dw-leaf em { position: absolute; right: 10%; top: 52%; width: 6px; height: 6px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff1c4, #c9973a 60%, #6b4a18); box-shadow: 0 0 6px rgba(255,214,140,.8); }
+    @keyframes dwSway { 0%,100% { transform: rotateY(-72deg); } 50% { transform: rotateY(-66deg); } }
+    .dw-spill { position: absolute; left: 50%; top: 58%; width: min(520px, 110%); height: 46%; transform: translateX(-50%); pointer-events: none;
+      background: radial-gradient(ellipse 50% 60% at 50% 10%, rgba(255,214,140,.42), rgba(255,190,100,.16) 45%, transparent 75%);
+      clip-path: polygon(36% 0, 64% 0, 100% 100%, 0 100%); filter: blur(6px); animation: dwGlow 5s ease-in-out infinite; }
+    @media (max-width: 900px) { .memory-stone.has-door { width: min(210px, 56vw); top: 42%; } }
+    @media (prefers-reduced-motion: reduce) { .dw-light, .dw-rays, .dw-dust, .dw-leaf, .dw-spill { animation: none !important; } }
+
+
+    /* living light: drifting caustic shimmer, irregular flicker, rays breathing, twinkling dust */
+    .dw-shimmer { position: absolute; inset: -30%; mix-blend-mode: screen; opacity: .55; filter: blur(10px);
+      background:
+        radial-gradient(ellipse 18% 12% at 30% 40%, rgba(255,250,225,.9), transparent 70%),
+        radial-gradient(ellipse 14% 20% at 62% 58%, rgba(255,240,200,.8), transparent 70%),
+        radial-gradient(ellipse 22% 10% at 48% 72%, rgba(255,232,180,.7), transparent 70%),
+        radial-gradient(ellipse 12% 16% at 70% 30%, rgba(255,246,215,.75), transparent 70%);
+      animation: dwCaustic 9s ease-in-out infinite alternate, dwFlicker 3.7s steps(1) infinite; }
+    @keyframes dwCaustic { 0% { transform: translate(-6%, 4%) rotate(0deg) scale(1); } 50% { transform: translate(5%, -3%) rotate(14deg) scale(1.12); } 100% { transform: translate(-2%, -6%) rotate(-10deg) scale(.95); } }
+    @keyframes dwFlicker { 0% { opacity: .55; } 11% { opacity: .68; } 19% { opacity: .5; } 33% { opacity: .62; } 47% { opacity: .48; } 58% { opacity: .7; } 71% { opacity: .56; } 86% { opacity: .64; } }
+    .dw-light { animation: dwGlow 5s ease-in-out infinite, dwPulse 2.3s ease-in-out infinite; }
+    @keyframes dwPulse { 0%,100% { filter: brightness(1); } 37% { filter: brightness(1.08); } 64% { filter: brightness(.96); } }
+    .dw-rays { animation: dwRays 30s linear infinite, dwRayBreath 6.5s ease-in-out infinite; }
+    @keyframes dwRayBreath { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
+    .dw-dust2 { background-size: 53px 47px, 31px 37px; background-position: 7px 13px, 19px 3px; opacity: .6; animation: dwDust 20s linear infinite, dwTwinkle 2.8s ease-in-out infinite; }
+    @keyframes dwTwinkle { 0%,100% { opacity: .35; } 50% { opacity: .85; } }
+    @media (prefers-reduced-motion: reduce) { .dw-shimmer, .dw-dust2 { animation: none !important; } }
+
+
+    /* Gate 03: vigil of candles */
+    .vigil { position: absolute; inset: 0; transform: scale(1.1); transform-origin: 50% 74%; }
+    .vigil-glow { position: absolute; left: 50%; bottom: 8%; width: 140%; height: 90%; transform: translateX(-50%); pointer-events: none;
+      background: radial-gradient(ellipse 45% 50% at 50% 70%, rgba(255,196,110,.30), rgba(255,170,80,.12) 45%, transparent 75%); animation: vigilBreath 4.2s ease-in-out infinite; }
+    @keyframes vigilBreath { 0%,100% { opacity: .85; } 45% { opacity: 1; } 70% { opacity: .8; } }
+    .vigil-floor { position: absolute; left: 8%; right: 8%; bottom: 6%; height: 16%; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 30%, rgba(255,200,120,.28), rgba(255,180,90,.08) 55%, transparent 75%); filter: blur(6px); }
+    .vc { position: absolute; width: var(--w); height: calc(var(--h) + var(--w) * 0.9); transform: translateX(-50%); }
+    .vc-wax { position: absolute; left: 0; bottom: 0; width: var(--w); height: var(--h); border-radius: calc(var(--w) * .12) calc(var(--w) * .12) 3px 3px / calc(var(--w) * .2) calc(var(--w) * .2) 3px 3px;
+      background: linear-gradient(90deg, #a99c83, #e8ddc6 22%, #fffaf0 45%, #efe5d0 66%, #b9ad95 88%, #8f8370);
+      box-shadow: inset 0 calc(var(--w) * .18) calc(var(--w) * .2) calc(var(--w) * -.12) rgba(255,214,150,.95), 0 4px 10px rgba(0,0,0,.5); }
+    .vc-wax::before { content: ""; position: absolute; top: -2px; left: 4%; right: 4%; height: calc(var(--w) * .26); border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 40%, #fff7e0, #eadbb8 70%); }
+    .vc-wax::after { content: ""; position: absolute; top: 4%; left: 18%; width: 9%; height: 26%; border-radius: 0 0 50% 50%; background: #f8f0de; opacity: .85; }
+    .vc-wick { position: absolute; left: 50%; bottom: calc(var(--h) - 1px); width: max(1.5px, calc(var(--w) * .06)); height: calc(var(--w) * .22); transform: translateX(-50%); border-radius: 1px; background: linear-gradient(#140d06, #3a2a18); }
+    .vc-flame { position: absolute; left: 50%; bottom: calc(var(--h) + var(--w) * .12); width: calc(var(--w) * .42); height: calc(var(--w) * .9); transform: translateX(-50%); transform-origin: 50% 92%;
+      border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+      background:
+        radial-gradient(ellipse 40% 22% at 50% 88%, rgba(110,150,255,.7), rgba(110,150,255,0) 100%),
+        radial-gradient(ellipse 34% 46% at 50% 66%, #fffef6 0 35%, rgba(255,250,230,0) 100%),
+        radial-gradient(ellipse 60% 75% at 50% 62%, #ffe7a3 0 30%, #ffb648 58%, rgba(255,120,30,0) 85%);
+      filter: blur(.4px); animation: vcFlick var(--d) ease-in-out var(--o) infinite; }
+    @keyframes vcFlick { 0%,100% { transform: translateX(-50%) scale(1,1) skewX(0); } 22% { transform: translateX(-50%) scale(.95,1.07) skewX(2.5deg); } 41% { transform: translateX(-50%) scale(1.04,.94) skewX(-2deg); } 63% { transform: translateX(-50%) scale(.97,1.08) skewX(1.5deg); } 82% { transform: translateX(-50%) scale(1.02,.96) skewX(-1deg); } }
+    .vc-halo { position: absolute; left: 50%; bottom: calc(var(--h) - var(--w) * .6); width: calc(var(--w) * 4.2); height: calc(var(--w) * 4.2); transform: translateX(-50%); border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(255,200,125,.32), rgba(255,170,90,.1) 40%, transparent 70%); mix-blend-mode: screen; animation: haloPulse var(--d) ease-in-out var(--o) infinite; }
+    @media (max-width: 900px) { .vigil { transform: scale(.8); transform-origin: 50% 62%; } }
+    @media (prefers-reduced-motion: reduce) { .vc-flame, .vc-halo, .vigil-glow { animation: none !important; } }
+
+
+    /* Gate 08: the eternal circle */
+    .eternal { position: absolute; left: 50%; top: 45%; width: min(360px, 74%); aspect-ratio: 1; max-width: 100%; transform: translate(-50%, -50%); }
+    .eternal-glow { position: absolute; inset: -18%; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(255,222,150,.20), rgba(232,190,100,.10) 35%, transparent 62%); animation: auraBreathe 6s ease-in-out infinite; }
+    .eternal-cv { position: absolute; inset: 0; width: 100%; height: 100%; }
+    @media (max-width: 900px) { .eternal { width: min(250px, 68vw); top: 44%; } }
+
+    .enter-btn:focus { outline: none; }
+    .enter-btn:focus-visible { outline: 2px solid rgba(255,230,170,.8); outline-offset: 4px; }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      font-size: .72rem;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+      color: var(--gold-2);
+      font-weight: 700;
+    }
+
+    .portal-card h1 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(3.2rem, 8vw, 6.9rem);
+      line-height: .86;
+      letter-spacing: -0.055em;
+      color: transparent;
+      background: linear-gradient(115deg, #b8862e 0%, #f3d98c 22%, #fff4cf 34%, #e2b85a 50%, #c9973a 64%, #f6e1a0 82%, #b8862e 100%) 0 0 / 220% 100%;
+      -webkit-background-clip: text; background-clip: text;
+      filter: drop-shadow(0 2px 18px rgba(232,196,106,.25));
+      animation: goldSheen 8s ease-in-out infinite;
+      padding-bottom: .08em;
+    }
+    @keyframes goldSheen { 0%,100% { background-position: 100% 0; } 50% { background-position: 0 0; } }
+    @media (prefers-reduced-motion: reduce) { .portal-card h1 { animation: none; } }
+
+    .portal-card p {
+      margin: 22px auto 0;
+      max-width: 520px;
+      color: var(--ivory-soft);
+      font-size: clamp(1rem, 2.2vw, 1.2rem);
+      line-height: 1.72;
+    }
+
+    .enter-btn, .cta, .ghost-btn {
+      border: 0;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: transform 220ms var(--ease), border-color 220ms var(--ease), background 220ms var(--ease), color 220ms var(--ease), box-shadow 220ms var(--ease);
+    }
+
+    .enter-btn {
+      margin-top: 34px;
+      padding: 15px 26px;
+      color: #2a1c08;
+      background: linear-gradient(135deg, #fff1c4 0%, #e8c46a 28%, #c9973a 55%, #f3d98c 78%, #b8862e 100%);
+      border: 0;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      box-shadow: 0 14px 48px rgba(232,196,106,.32);
+    }
+
+    .enter-btn:hover, .cta:hover, .ghost-btn:hover { transform: translateY(-2px); }
+    .enter-btn:active, .cta:active, .ghost-btn:active { transform: translateY(0); }
+
+    .loading-line {
+      width: min(360px, 74vw);
+      height: 1px;
+      margin: 28px auto 0;
+      background: rgba(250,248,243,.12);
+      overflow: hidden;
+    }
+
+    .loading-line i {
+      display: block;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, var(--gold-2), transparent);
+      animation: sweep 1.8s infinite var(--ease);
+    }
+
+    @keyframes sweep {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(260%); }
+    }
+
+    /* Top chrome */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px clamp(16px, 3vw, 36px);
+      color: var(--ivory);
+      background: linear-gradient(180deg, rgba(11,15,28,.78), rgba(11,15,28,0));
+      pointer-events: none;
+    }
+
+    .brand-mark, .controls {
+      pointer-events: auto;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .brand-orb {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(240,238,232,.52);
+      background:
+        radial-gradient(circle at 35% 30%, rgba(250,248,243,.88), rgba(240,238,232,.45) 20%, rgba(160,188,228,0.19) 43%, transparent 66%),
+        #0E1324;
+      box-shadow: 0 0 24px rgba(206,212,224,.2);
+      flex: 0 0 auto;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.05;
+      min-width: 0;
+    }
+
+    .brand-text strong {
+      font-family: var(--serif);
+      font-size: 1.14rem;
+      font-weight: 600;
+      letter-spacing: .025em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-text span {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .68rem;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(250,248,243,.18);
+      border-radius: 999px;
+      color: var(--ivory);
+      background: rgba(11,15,28,.46);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      transition: border-color 200ms var(--ease), background 200ms var(--ease), transform 200ms var(--ease);
+    }
+
+    .icon-btn:hover {
+      border-color: rgba(240,238,232,.48);
+      background: rgba(206,212,224,.1);
+      transform: translateY(-1px);
+    }
+
+    .progress-shell {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      z-index: 70;
+      background: rgba(250,248,243,.08);
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--crimson), var(--gold), var(--silver));
+      box-shadow: 0 0 20px rgba(240,238,232,.36);
+      transition: width 600ms var(--ease);
+    }
+
+    .gate-rail {
+      position: fixed;
+      left: clamp(14px, 2vw, 30px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 55;
+      display: grid;
+      gap: 10px;
+      pointer-events: auto;
+    }
+
+    .gate-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 1px solid rgba(250,248,243,.24);
+      background: rgba(250,248,243,.08);
+      cursor: pointer;
+      position: relative;
+      transition: transform 220ms var(--ease), background 220ms var(--ease), border-color 220ms var(--ease);
+    }
+
+    .gate-dot::after {
+      content: attr(data-label);
+      position: absolute;
+      top: 50%;
+      left: 20px;
+      transform: translateY(-50%) translateX(-6px);
+      opacity: 0;
+      visibility: hidden;
+      white-space: nowrap;
+      padding: 7px 10px;
+      border: 1px solid rgba(250,248,243,.14);
+      border-radius: 999px;
+      color: var(--ivory-soft);
+      background: rgba(11,15,28,.86);
+      backdrop-filter: blur(12px);
+      font-size: .72rem;
+      transition: opacity 180ms var(--ease), transform 180ms var(--ease), visibility 180ms var(--ease);
+    }
+
+    .gate-dot:hover::after {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    .gate-dot.active {
+      background: var(--gold-2);
+      border-color: var(--gold-2);
+      transform: scale(1.36);
+      box-shadow: 0 0 16px rgba(240,238,232,.38);
+    }
+
+    /* Main experience */
+    .experience {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 104px clamp(18px, 4vw, 76px) 68px;
+    }
+
+    .gate {
+      width: min(1180px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(300px, .78fr);
+      align-items: center;
+      gap: clamp(28px, 6vw, 78px);
+      opacity: 0;
+      transform: translateY(28px) scale(.985);
+      filter: blur(14px);
+      transition: opacity 800ms var(--ease), transform 800ms var(--ease), filter 800ms var(--ease);
+      pointer-events: none;
+      position: absolute;
+      padding-left: 38px;
+    }
+
+    .gate.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+      pointer-events: auto;
+      position: relative;
+    }
+
+    .gate-copy {
+      max-width: 720px;
+    }
+
+    .gate-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      color: var(--gold-2);
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    .gate-kicker::before {
+      content: "";
+      display: block;
+      width: 42px;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .gate h2 {
+      margin: 0;
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: clamp(4rem, 9vw, 9.6rem);
+      line-height: .82;
+      letter-spacing: -0.07em;
+      text-wrap: balance;
+    }
+
+    .gate h2.long { font-size: clamp(3rem, 6vw, 6.2rem); line-height: .88; }
+
+    .gate h2 .accent {
+      display: block;
+      color: transparent;
+      background: linear-gradient(120deg, #fff4cf, #f3d98c 30%, #d9a94a 62%, #f6e1a0 90%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    .gate .prose {
+      margin: clamp(20px, 3vw, 34px) 0 0;
+      max-width: 610px;
+      color: var(--ivory-soft);
+      font-family: var(--serif);
+      font-size: clamp(1.42rem, 2.45vw, 2.18rem);
+      line-height: 1.28;
+    }
+
+    .support-line {
+      margin: 22px 0 0;
+      max-width: 620px;
+      color: var(--muted);
+      font-size: clamp(.96rem, 1.7vw, 1.08rem);
+      line-height: 1.74;
+    }
+
+    .gate-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      padding: 14px 20px;
+      color: #0E1324;
+      background: linear-gradient(135deg, #fff1c4 0%, #e8c46a 30%, #c9973a 58%, #f3d98c 82%, #b8862e 100%);
+      font-weight: 800;
+      letter-spacing: .04em;
+      box-shadow: 0 16px 46px rgba(206,212,224,.18);
+    }
+
+    .cta::after { content: "→"; }
+
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 13px 18px;
+      color: var(--ivory);
+      border: 1px solid rgba(250,248,243,.18);
+      background: rgba(11,15,28,.48);
+      backdrop-filter: blur(12px);
+    }
+
+    .visual-panel {
+      min-height: clamp(410px, 64vh, 640px);
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(240,238,232,.12), transparent 30%),
+        linear-gradient(180deg, rgba(250,248,243,.065), rgba(250,248,243,.02)),
+        rgba(11,15,28,.62);
+      box-shadow: 0 24px 80px rgba(5,8,18,.45), 0 0 60px rgba(160,188,228,.08), inset 0 0 80px rgba(250,248,243,.06);
+      backdrop-filter: blur(18px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .visual-panel::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(250,248,243,.08);
+      border-radius: 25px;
+      pointer-events: none;
+    }
+
+    .visual-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(120deg, transparent 0 34%, rgba(250,248,243,.09) 46%, transparent 58% 100%),
+        radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(240,238,232,.16), transparent 18%);
+      mix-blend-mode: screen;
+      opacity: .48;
+      pointer-events: none;
+    }
+
+    .orbital-ring {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%);
+      border: 1px solid rgba(240,238,232,.22);
+      border-radius: 50%;
+      animation: rotateSlow 18s linear infinite;
+    }
+
+    .orbital-ring.r2 {
+      width: 370px;
+      height: 180px;
+      border-color: rgba(160,188,228,.16);
+      transform: translate(-50%, -50%) rotate(24deg);
+      animation-duration: 24s;
+      animation-direction: reverse;
+    }
+
+    .orbital-ring.r3 {
+      width: 160px;
+      height: 420px;
+      border-color: rgba(160,188,228,0.27);
+      transform: translate(-50%, -50%) rotate(-18deg);
+      animation-duration: 31s;
+    }
+
+    @keyframes rotateSlow {
+      from { rotate: 0deg; }
+      to { rotate: 360deg; }
+    }
+
+    .memory-stone {
+      position: absolute;
+      left: 50%;
+      top: 46%;
+      width: min(300px, 62vw);
+      aspect-ratio: 4 / 5;
+      transform: translate(-50%, -50%) rotateX(8deg) rotateY(-10deg);
+      border: 1px solid rgba(232,196,106,.45);
+      border-radius: 48% 48% 18px 18px;
+      background:
+        radial-gradient(circle at 50% 22%, rgba(250,248,243,.24), transparent 12%),
+        radial-gradient(circle at 50% 50%, rgba(206,212,224,.12), transparent 42%),
+        linear-gradient(150deg, rgba(250,248,243,.08), rgba(160,188,228,0.07), rgba(11,15,28,.72));
+      box-shadow: 0 0 70px rgba(232,196,106,.16);
+      background-size: cover;
+      background-position: center;
+      animation: breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: translate(-50%, -50%) rotateX(8deg) rotateY(-10deg) scale(1); }
+      50% { transform: translate(-50%, -52%) rotateX(7deg) rotateY(10deg) scale(1.025); }
+    }
+
+    .memory-stone span {
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(250,248,243,.08);
+      border-radius: inherit;
+    }
+
+    .panel-label {
+      position: absolute;
+      left: 28px;
+      right: 28px;
+      bottom: 26px;
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: end;
+      color: var(--muted);
+      font-size: .72rem;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .panel-label strong {
+      display: block;
+      color: var(--ivory);
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      line-height: 1;
+      letter-spacing: -.03em;
+      text-transform: none;
+      font-weight: 500;
+    }
+
+    .chapter-hint {
+      position: fixed;
+      right: clamp(16px, 3vw, 36px);
+      bottom: 24px;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(250,248,243,.55);
+      font-size: .74rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      transition: color 200ms var(--ease), opacity 400ms var(--ease);
+    }
+
+    .chapter-hint:hover { color: var(--gold-2); }
+    .chapter-hint:hover i { border-color: rgba(240,238,232,.5); }
+    .chapter-hint.done { opacity: 0; pointer-events: none; }
+
+    .chapter-hint i {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(250,248,243,.16);
+      font-style: normal;
+      animation: pulseArrow 1.8s ease-in-out infinite;
+    }
+
+    @keyframes pulseArrow {
+      0%, 100% { transform: translateY(0); opacity: .62; }
+      50% { transform: translateY(5px); opacity: 1; }
+    }
+
+    /* Final commercial gallery */
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 30px;
+      max-width: 860px;
+    }
+
+    .art-card {
+      min-height: 178px;
+      border: 1px solid rgba(250,248,243,.13);
+      border-radius: 22px;
+      overflow: hidden;
+      background: rgba(11,15,28,.58);
+      position: relative;
+      box-shadow: 0 18px 44px rgba(0,0,0,.32);
+    }
+
+    .art-card .thumb {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      opacity: .72;
+      transform: scale(1.08);
+      transition: transform 900ms var(--ease), opacity 900ms var(--ease);
+    }
+
+    .art-card:hover .thumb {
+      transform: scale(1.16);
+      opacity: .92;
+    }
+
+    .art-card .caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 14px;
+      background: linear-gradient(180deg, transparent, rgba(11,15,28,.88));
+    }
+
+    .art-card strong {
+      display: block;
+      font-family: var(--serif);
+      font-weight: 500;
+      font-size: 1.15rem;
+    }
+
+    .art-card span {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: .74rem;
+    }
+
+    .email-form, .commission-form {
+      margin-top: 28px;
+      display: grid;
+      gap: 10px;
+      max-width: 560px;
+    }
+
+    .email-form {
+      grid-template-columns: 1fr auto;
+    }
+
+    input, textarea {
+      width: 100%;
+      color: var(--ivory);
+      border: 1px solid rgba(250,248,243,.16);
+      border-radius: 999px;
+      background: rgba(11,15,28,.58);
+      min-height: 50px;
+      padding: 13px 17px;
+      outline: none;
+      box-shadow: inset 0 0 24px rgba(0,0,0,.22);
+    }
+
+    textarea {
+      min-height: 108px;
+      border-radius: 24px;
+      resize: vertical;
+    }
+
+    input:focus, textarea:focus {
+      border-color: rgba(240,238,232,.48);
+      box-shadow: 0 0 0 3px rgba(206,212,224,.1);
+    }
+
+    .form-note {
+      margin-top: 8px;
+      color: rgba(250,248,243,.48);
+      font-size: .78rem;
+      line-height: 1.5;
+    }
+
+    /* Mobile */
+    @media (max-width: 900px) {
+      .topbar { padding: 15px 14px; }
+      .brand-text span { display: none; }
+      .brand-text strong { font-size: 1rem; }
+      .gate-rail {
+        left: 50%;
+        top: auto;
+        bottom: 78px;
+        transform: translateX(-50%);
+        grid-template-columns: repeat(10, 1fr);
+        gap: 7px;
+        padding: 9px;
+        border: 1px solid rgba(250,248,243,.1);
+        border-radius: 999px;
+        background: rgba(11,15,28,.42);
+        backdrop-filter: blur(12px);
+      }
+      .gate-dot { width: 8px; height: 8px; }
+      .gate-dot::after { display: none; }
+      .experience { padding: 86px 16px 128px; place-items: start center; }
+      .gate {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        padding-left: 0;
+      }
+      .gate h2 { font-size: clamp(3.4rem, 16vw, 5.6rem); }
+      .gate h2.long { font-size: clamp(2.6rem, 11vw, 4rem); }
+      .gate .prose { font-size: clamp(1.28rem, 6vw, 1.72rem); }
+      .support-line { font-size: .96rem; }
+      .visual-panel { min-height: 340px; order: -1; border-radius: 26px; }
+      .chapter-hint { bottom: 22px; right: 14px; }
+      .chapter-hint span { display: none; }
+      .gate-rail { bottom: 74px; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .email-form { grid-template-columns: 1fr; }
+      .gate-actions .cta, .gate-actions .ghost-btn { width: 100%; }
+      .portal-card h1 { font-size: clamp(3rem, 16vw, 5.2rem); }
+    }
+
+    @media (max-width: 520px) {
+      .controls .icon-btn:nth-child(1) { display: none; }
+      .visual-panel { min-height: 310px; }
+      .panel-label { left: 20px; right: 20px; bottom: 20px; }
+      .memory-stone { width: min(250px, 70vw); }
+      .orbital-ring { width: 220px; height: 220px; }
+      .orbital-ring.r2 { width: 285px; height: 140px; }
+      .orbital-ring.r3 { width: 130px; height: 330px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .001ms !important;
+      }
+      .bg-layer.active { transform: none; }
+    }
+  </style>
+</head>
+<body class="locked">
+  <div class="echo-layer" id="echoLayer" aria-hidden="true"></div>
+  <div class="whispers" id="whispers" aria-hidden="true"></div>
+  <div class="app" id="app">
+    <div class="progress-shell" aria-hidden="true"><div class="progress-bar" id="progressBar"></div></div>
+
+    <div class="bg-stage" aria-hidden="true">
+      <div class="bg-layer active" id="bgA"></div>
+      <div class="bg-layer" id="bgB"></div>
+    </div>
+    <canvas id="three-canvas" aria-hidden="true"></canvas>
+    <div class="veil" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="topbar" aria-label="Experience controls">
+      <a class="brand-mark" href="#" aria-label="Echoes of Forever Art home">
+        <span class="brand-orb" aria-hidden="true"></span>
+        <span class="brand-text">
+          <strong>Echoes of Forever Art</strong>
+          <span>For the hearts that remember</span>
+        </span>
+      </a>
+      <div class="controls">
+        <button class="icon-btn" id="prevGate" type="button" aria-label="Previous gate">↑</button>
+        <button class="icon-btn" id="soundToggle" type="button" aria-label="Toggle sound" aria-pressed="true">♫</button>
+        <button class="icon-btn" id="nextGate" type="button" aria-label="Next gate">↓</button>
+      </div>
+    </header>
+
+    <nav class="gate-rail" id="gateRail" aria-label="Gate navigation"></nav>
+
+    <main class="experience" id="experience" aria-live="polite"></main>
+
+    <button class="chapter-hint" id="chapterHint" type="button" aria-label="Next gate"><span>Next gate</span><i>↓</i></button>
+
+    <section class="loader" id="loader" aria-label="Opening portal">
+      <div class="portal-card">
+        <div class="sigil diamonds" aria-hidden="true"><b class="aura"></b><b class="goldring"></b><i class="echo"></i><i class="echo"></i><i class="echo"></i><b class="halo"></b><canvas class="diamond-inf" width="112" height="112"></canvas></div>
+        <p class="eyebrow">Echoes of Forever Art</p>
+        <h1>The Infinite Gallery</h1>
+        <p>A sanctuary for love that never dies, memories that never fade and souls we carry with us beyond goodbye.</p>
+        <button class="enter-btn" id="enterExperience" type="button">Enter the Gallery</button>
+        <div class="loading-line" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+
+  <script defer>
+    (() => {
+      'use strict';
+
+      /* --------------------------------------------------
+         EDIT THESE LINKS AND ASSETS
+      -------------------------------------------------- */
+      const CONFIG = {
+        links: {
+          collection: '#gallery',        // Opens Gate 09 · The Infinite Gallery
+          circle: '#circle',             // Opens Gate 08 · The Eternal Circle
+          books: 'books.html'            // Books page
+        },
+
+        // MailerLite: once the account exists, paste the form's action URL here
+        // (MailerLite → Forms → Embedded form → HTML code → the <form action="..."> link).
+        mailerlite: {
+          action: ''
+        },
+
+        // Replace these with real artwork URLs. Leave blank to use cinematic gradient placeholders.
+        imageSlots: [
+          '', '', '', 'images/art-of-eternity.webp', 'images/written-echoes.webp', 'images/love-beyond-goodbye.webp',
+          '', '', '', 'images/love-beyond-goodbye.webp'
+        ],
+
+        // Add each collection's image path when ready, e.g. image: 'images/written-echoes.jpg'
+        galleryCards: [
+          { title: 'The Written Echoes', type: 'Books, poetry and reflections', image: 'images/written-echoes.webp', link: 'books' },
+          { title: 'The Art of Eternity', type: 'Celestial and spiritual artwork', image: 'images/art-of-eternity.webp', link: '' },
+          { title: 'Love Beyond Goodbye', type: 'Memorial artwork and remembrance gifts', image: 'images/love-beyond-goodbye.webp', link: '' }
+        ],
+
+        gates: [
+          {
+            no: '01',
+            caption: "Where love remembers.",
+            label: "Memory",
+            title: ["The Door", "of Memory"],
+            prose: "There are losses that divide a life into two worlds: the one where they were here, and the one where we must continue without them.",
+            support: "Echoes of Forever was born from love and the ache of absence. Here, remembering is not something to outgrow. The people we miss remain woven into who we are, and their stories deserve to be carried with tenderness.",
+            visual: 'Soft gold light. Floating dust. A threshold opening inside the dark.',
+            cue: 'A low breath of sound, like a room remembering you.',
+            cta: null,
+            palette: ['#0B0F1C', '#18203A', '#CED4E0'],
+            bg: 'radial-gradient(circle at 50% 36%, rgba(240,238,232,0.38), transparent 23%), radial-gradient(circle at 18% 75%, rgba(160,188,228,0.25), transparent 32%), linear-gradient(145deg, #0B0F1C, #18203A 52%, #0B0F1C)'
+          },
+          {
+            no: '02',
+            caption: "Born from love. Created through loss.",
+            label: "Story",
+            title: ["The Heart Behind", "Echoes of Forever"],
+            prose: "I know what it means to wake up and remember that someone you love more than life itself is no longer here. I live in that world every day.",
+            support: "I have lost people who were part of the foundation of my existence. I still long for their voices, their laughter and the comfort of their presence. I did not create Echoes of Forever because I had learned to overcome grief. I created it because I have not. Through words, art and stories, I wanted to build a place where no one is expected to leave love behind.",
+            visual: 'A luminous pulse moving through the gallery like the first note of a song.',
+            cue: 'Single piano tone with a soft celestial tail.',
+            cta: null,
+            palette: ['#0C1120', '#151D34', '#F0EEE8'],
+            bg: 'radial-gradient(circle at 62% 26%, rgba(160,188,228,0.32), transparent 23%), radial-gradient(circle at 30% 72%, rgba(206,212,224,0.26), transparent 32%), linear-gradient(130deg, #0B0F1C, #151D34 55%, #0B0F1C)'
+          },
+          {
+            no: '03',
+            caption: "For the love that stays.",
+            label: "Hearts",
+            title: ["The Hearts", "That Remember"],
+            prose: "You do not have to make your grief smaller to belong here.",
+            support: "For those who still speak to someone they cannot see, who search for them in songs and dreams, and who carry their absence through every changing season: this sanctuary is for you. Love does not become less meaningful because a life has ended.",
+            visual: 'Slow crimson glow beneath a field of silver particles.',
+            cue: 'Distant echo, warm and barely there.',
+            cta: null,
+            palette: ['#0B0F1C', '#A0BCE4', '#A0BCE4'],
+            bg: 'radial-gradient(circle at 42% 40%, rgba(160,188,228,0.33), transparent 25%), radial-gradient(circle at 76% 18%, rgba(160,188,228,0.25), transparent 22%), linear-gradient(160deg, #0B0F1C, #131A2E 48%, #0E1324)'
+          },
+          {
+            no: '04',
+            caption: "A universe of meaning.",
+            label: "Art",
+            title: ["The Celestial", "Archive"],
+            prose: "Some feelings cannot be spoken. Art gives them another language.",
+            support: "Explore celestial imagery, symbolic companions, stars, wings and dreamlike creations inspired by memory, connection and wonder. These artworks are invitations to find your own meaning, whether that is comfort, remembrance or simply beauty.",
+            visual: 'A rotating astral sculpture surrounded by orbital rings.',
+            cue: 'Soft shimmer as if dust touched glass.',
+            cta: null,
+            palette: ['#121A30', '#9AA3B6', '#A0BCE4'],
+            bg: 'radial-gradient(circle at 50% 50%, rgba(206,212,224,0.26), transparent 24%), radial-gradient(circle at 80% 72%, rgba(160,188,228,0.19), transparent 26%), linear-gradient(135deg, #0B0F1C, #121A30 42%, #131A2D)'
+          },
+          {
+            no: '05',
+            caption: "Stories for hearts that remember.",
+            label: "Books",
+            title: ["The Stories", "We Carry"],
+            prose: "There are words we wish we could say to those we miss. Sometimes a book becomes the place we finally say them.",
+            support: "The forthcoming Echoes of Forever books explore grief, enduring love, memory and the questions that follow loss. The first book is in development; discover its story here as it takes shape.",
+            visual: 'Pages of light folding and unfolding inside a dark chamber.',
+            cue: 'A low hum with one bright note rising through it.',
+            cta: { text: "Explore the Books", link: "books" },
+            palette: ['#0B0F1C', '#18203A', '#CED4E0'],
+            bg: 'radial-gradient(circle at 35% 30%, rgba(240,238,232,0.29), transparent 22%), radial-gradient(circle at 70% 78%, rgba(160,188,228,0.17), transparent 26%), linear-gradient(150deg, #0B0F1C, #161E35 46%, #0B0F1C)'
+          },
+          {
+            no: '06',
+            caption: "A little beauty to hold close.",
+            label: "Keepsakes",
+            title: ["The Keepsake", "Realm"],
+            prose: "A meaningful piece can hold a memory close, even when the person it recalls is beyond our reach.",
+            support: "Discover artwork and, as the collection grows, prints and keepsakes inspired by love, remembrance and the soul. Each piece is intended to offer beauty and personal meaning, without prescribing how anyone should grieve.",
+            visual: 'Floating framed objects appearing like relics inside the gallery.',
+            cue: 'Soft click of glass, then a warm reverberation.',
+            cta: { text: "Explore the Collection", link: "collection" },
+            palette: ['#0B0F1C', '#9AA3B6', '#FAF8F3'],
+            bg: 'radial-gradient(circle at 58% 36%, rgba(206,212,224,0.32), transparent 28%), radial-gradient(circle at 23% 82%, rgba(150,160,182,0.42), transparent 28%), linear-gradient(145deg, #0B0F1C, #131A2D 50%, #0B0F1C)'
+          },
+          {
+            no: '07',
+            caption: "New creations will be announced here.",
+            label: "Future",
+            title: ["Made With", "Meaning"],
+            prose: "Some stories call for something deeply personal.",
+            support: "Personalised remembrance pieces may become part of Echoes of Forever in the future. For now, explore the existing artwork and follow along for announcements about new collections and possible custom work.",
+            visual: 'A single illuminated frame, empty until the visitor steps closer.',
+            cue: 'Breath, hush, then a delicate rising tone.',
+            cta: { text: "View the Artwork", link: "collection" },
+            palette: ['#0B0F1C', '#A0BCE4', '#F0EEE8'],
+            bg: 'radial-gradient(circle at 48% 42%, rgba(160,188,228,0.29), transparent 26%), radial-gradient(circle at 56% 22%, rgba(240,238,232,0.26), transparent 18%), linear-gradient(165deg, #0B0F1C, #131A2E 52%, #0B0F1C)'
+          },
+          {
+            no: '08',
+            caption: "Stay close to what matters.",
+            label: "Circle",
+            title: ["The Eternal", "Circle"],
+            prose: "Some connections are built simply by knowing that someone else understands.",
+            support: "The Eternal Circle is envisioned as a gentle way to hear about new writing, artwork, book news and future collections. There is no expectation to grieve in any particular way\u2014only an invitation to stay connected.",
+            visual: 'A ring of light closing softly around a name written in gold.',
+            cue: 'Circular shimmer, almost like a bell under water.',
+            cta: { text: "Join the Eternal Circle", link: "circle" },
+            palette: ['#121A30', '#CED4E0', '#A0BCE4'],
+            bg: 'radial-gradient(circle at 50% 44%, rgba(160,188,228,0.23), transparent 24%), radial-gradient(circle at 50% 50%, rgba(206,212,224,0.23), transparent 35%), linear-gradient(145deg, #0B0F1C, #121A30 48%, #0E1324)'
+          },
+          {
+            no: '09',
+            caption: "Art for love, memory and wonder.",
+            label: "Gallery",
+            title: ["The Infinite", "Gallery"],
+            prose: "Come for the beauty. Stay for the meaning you discover within it.",
+            support: "Browse celestial art, symbolic companions and remembrance-inspired creations. The gallery will grow as new pieces become ready. Each work has its own story, but the meaning it holds for you is yours to decide.",
+            visual: 'Three framed pieces floating forward with cinematic hover light.',
+            cue: 'Three soft notes, spaced like stars appearing.',
+            cta: { text: "Explore the Collection", link: "collection" },
+            palette: ['#0B0F1C', '#18203A', '#9AA3B6'],
+            bg: 'radial-gradient(circle at 28% 34%, rgba(206,212,224,0.28), transparent 25%), radial-gradient(circle at 78% 62%, rgba(160,188,228,0.19), transparent 26%), linear-gradient(135deg, #0B0F1C, #141C33 54%, #0B0F1C)'
+          },
+          {
+            no: '10',
+            caption: "Where love outlives goodbye.",
+            label: "Return",
+            title: ["Until We", "Meet Again"],
+            prose: "You may leave this page, but you never have to leave the people you love behind.",
+            support: "Thank you for stepping into Echoes of Forever. Return whenever you need words that understand, art that speaks to you, or a reminder that your love still matters. Explore the gallery, discover the books, or stay connected for what comes next.",
+            visual: 'The gallery doors remain open; the light follows the visitor out.',
+            cue: 'Gentle final swell, then stillness.',
+            cta: { text: "Explore the Collection", link: "collection" },
+            palette: ['#0B0F1C', '#CED4E0', '#A0BCE4'],
+            bg: 'radial-gradient(circle at 50% 35%, rgba(240,238,232,0.38), transparent 28%), radial-gradient(circle at 50% 83%, rgba(160,188,228,0.2), transparent 28%), linear-gradient(180deg, #0B0F1C, #151C31 45%, #090D19)'
+          }
+        ]
+      };
+
+      const app = document.getElementById('app');
+      const loader = document.getElementById('loader');
+      const enterBtn = document.getElementById('enterExperience');
+      const experience = document.getElementById('experience');
+      const gateRail = document.getElementById('gateRail');
+      const progressBar = document.getElementById('progressBar');
+      const soundToggle = document.getElementById('soundToggle');
+      const nextGateBtn = document.getElementById('nextGate');
+      const prevGateBtn = document.getElementById('prevGate');
+      const bgA = document.getElementById('bgA');
+      const bgB = document.getElementById('bgB');
+      let bgFlip = false;
+      let currentGate = 0;
+      let isTransitioning = false;
+      let wheelLock = false;
+      let touchStartY = 0;
+      let prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function linkFor(key) {
+        return CONFIG.links[key] || '#';
+      }
+
+      // Internal links jump between gates instead of reloading the page.
+      const GATE_LINKS = { '#gallery': 8, '#circle': 7 };
+
+      function artBackground(index, fallback) {
+        const src = CONFIG.imageSlots[index] || '';
+        if (src.trim()) return `linear-gradient(180deg, transparent, rgba(11,15,28,.48)), url('${src}')`;
+        return fallback;
+      }
+
+      function cardBg(item, index) {
+        if (item.image) return `linear-gradient(180deg, transparent, rgba(11,15,28,.82)), url('${item.image}')`;
+        const gradients = [
+          'radial-gradient(circle at 35% 30%, rgba(240,238,232,.58), transparent 22%), radial-gradient(circle at 65% 64%, rgba(160,188,228,0.29), transparent 32%), linear-gradient(135deg, #141C33, #0B0F1C)',
+          'radial-gradient(circle at 65% 28%, rgba(160,188,228,.42), transparent 21%), radial-gradient(circle at 30% 70%, rgba(206,212,224,.34), transparent 30%), linear-gradient(135deg, #0B0F1C, #18203A)',
+          'radial-gradient(circle at 50% 42%, rgba(160,188,228,0.28), transparent 28%), radial-gradient(circle at 52% 20%, rgba(240,238,232,.35), transparent 18%), linear-gradient(135deg, #0B0F1C, #131A2E)'
+        ];
+        return gradients[index % gradients.length];
+      }
+
+      // Gate 03: a tall candle surrounded by smaller ones  [x%, bottom%, width, height, layer]
+      const VIGIL = [
+        [50, 30, 46, 150, 5],
+        [33, 29, 26, 82, 4], [67, 29, 28, 96, 4],
+        [22, 26, 20, 56, 6], [78, 26, 22, 64, 6],
+        [41, 24, 18, 44, 7], [59, 24, 20, 50, 7],
+        [12, 32, 16, 40, 3], [88, 32, 16, 46, 3],
+        [28, 38, 12, 30, 2], [72, 39, 13, 34, 2], [50, 41, 12, 26, 1]
+      ];
+
+      function buildGates() {
+        experience.innerHTML = CONFIG.gates.map((gate, index) => {
+          const isGallery = index === 8;
+          const isCircle = index === 7;
+          const isCommission = index === 6;
+          const final = index === 9;
+          const isCandles = index === 2;
+          const action = gate.cta ? `<a class="cta" href="${linkFor(gate.cta.link)}">${gate.cta.text}</a>` : '';
+
+          const gallery = isGallery ? `
+            <div class="collection-grid" id="collection-grid">
+              ${CONFIG.galleryCards.map((card, i) => `
+                <${card.link ? 'a' : 'div'} class="art-card"${card.link ? ` href="${linkFor(card.link)}"` : ''} aria-label="${card.title}">
+                  <span class="thumb" style="background-image: ${cardBg(card, i)}"></span>
+                  <span class="caption"><strong>${card.title}</strong><span>${card.type}${card.link ? '' : ' · Coming soon'}</span></span>
+                </${card.link ? 'a' : 'div'}>
+              `).join('')}
+            </div>
+          ` : '';
+
+          const circle = isCircle ? `
+            <form class="email-form" id="circleForm" method="post" target="_blank">
+              <input type="email" name="fields[email]" aria-label="Email address" placeholder="Your email address" required>
+              <button class="cta" type="submit">Join</button>
+              <p class="form-note">Gentle updates only. Unsubscribe any time.</p>
+            </form>
+          ` : '';
+          const commission = '';
+
+          const finalCtas = final ? `
+            <div class="gate-actions">
+              <a class="cta" href="${linkFor('collection')}">Explore the Collection</a>
+              <a class="ghost-btn" href="${linkFor('books')}">Discover the Books</a>
+              <a class="ghost-btn" href="${linkFor('circle')}">Join the Eternal Circle</a>
+            </div>
+          ` : '';
+
+          return `
+            <section class="gate ${index === 0 ? 'active' : ''}" data-gate="${index}" aria-label="Gate ${gate.no}: ${gate.label}">
+              <div class="gate-copy">
+                <div class="gate-kicker">Gate ${gate.no} · ${gate.label}</div>
+                <h2${(gate.title[0] + gate.title[1]).length > 22 ? ' class="long"' : ''}>${gate.title[0]} <span class="accent">${gate.title[1]}</span></h2>
+                <p class="prose">${gate.prose}</p>
+                <p class="support-line">${gate.support}</p>
+                ${isCandles ? `
+                <div class="candles" id="candles">
+                  <form class="candle-form" id="candleForm" autocomplete="off">
+                    <input id="candleName" name="name" maxlength="30" placeholder="Light a candle for… (a first name)" aria-label="Name to remember">
+                    <button class="cta" type="submit">Light a candle</button>
+                  </form>
+                  <div class="candle-sky" id="candleSky" aria-label="Candles lit in remembrance"></div>
+                  <p class="candle-note" id="candleNote">Each light is someone remembered by a visitor to this gallery.</p>
+                </div>` : ''}
+                ${gallery}
+                ${circle}
+                ${commission}
+                ${!final && action ? `<div class="gate-actions">${action}<button class="ghost-btn" type="button" data-next>Continue</button></div>` : ''}
+                ${!final && !action ? `<div class="gate-actions"><button class="ghost-btn" type="button" data-next>Continue</button></div>` : ''}
+                ${finalCtas}
+              </div>
+              <aside class="visual-panel" style="--mx: 50%; --my: 50%;" aria-label="${gate.label}: ${gate.caption}">
+                <div class="orbital-ring"></div>
+                <div class="orbital-ring r2"></div>
+                <div class="orbital-ring r3"></div>
+                ${index === 2 ? `<div class="vigil" aria-hidden="true"><i class="vigil-glow"></i>${VIGIL.map(([x,b,w,h,z],k)=>`<span class="vc" style="left:${x}%;bottom:${b}%;--w:${w}px;--h:${h}px;z-index:${z};--d:${(1.4+(k*37%9)/10).toFixed(2)}s;--o:-${(k*0.37%2).toFixed(2)}s"><i class="vc-halo"></i><i class="vc-flame"></i><b class="vc-wick"></b><b class="vc-wax"></b></span>`).join('')}<i class="vigil-floor"></i></div>` : ''}
+                ${index === 7 ? `<div class="eternal" aria-hidden="true"><i class="eternal-glow"></i><canvas class="eternal-cv"></canvas></div>` : ''}
+                ${index === 2 || index === 7 ? '' : index === 0 ? `<i class="dw-spill" aria-hidden="true"></i>
+                <div class="memory-stone has-door" aria-hidden="true"><div class="door-way"><i class="dw-light"></i><i class="dw-shimmer"></i><i class="dw-rays"></i><i class="dw-dust"></i><i class="dw-dust dw-dust2"></i><i class="dw-leaf"><b></b><b></b><em></em></i></div></div>` : `<div class="memory-stone" style="background-image: ${artBackground(index, 'radial-gradient(circle at 50% 22%, rgba(250,248,243,.24), transparent 12%), radial-gradient(circle at 50% 50%, rgba(206,212,224,.12), transparent 42%), linear-gradient(150deg, rgba(250,248,243,.08), rgba(160,188,228,0.07), rgba(11,15,28,.72))')};"><span></span></div>`}
+                <div class="panel-label"><span><strong>${gate.label}</strong>${gate.caption}</span></div>
+              </aside>
+            </section>
+          `;
+        }).join('');
+
+        gateRail.innerHTML = CONFIG.gates.map((gate, index) => `
+          <button class="gate-dot ${index === 0 ? 'active' : ''}" type="button" data-index="${index}" data-label="${gate.no} · ${gate.label}" aria-label="Go to Gate ${gate.no}: ${gate.label}"></button>
+        `).join('');
+
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+          const target = GATE_LINKS[a.getAttribute('href')];
+          if (target === undefined) return;
+          a.addEventListener('click', e => {
+            e.preventDefault();
+            if (currentGate === target) {
+              const grid = document.getElementById('collection-grid');
+              if (target === 8 && grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else goToGate(target);
+          });
+        });
+
+        const form = document.getElementById('circleForm');
+        if (form) form.addEventListener('submit', e => {
+          const note = form.querySelector('.form-note');
+          if (CONFIG.mailerlite.action) { form.action = CONFIG.mailerlite.action; note.textContent = 'Thank you. Please check your inbox to confirm.'; return; }
+          e.preventDefault();
+          note.textContent = 'Thank you. The Eternal Circle opens soon. Please check back shortly.';
+        });
+
+        experience.querySelectorAll('[data-next]').forEach(btn => btn.addEventListener('click', () => goToGate(currentGate + 1)));
+        gateRail.querySelectorAll('.gate-dot').forEach(btn => btn.addEventListener('click', () => goToGate(Number(btn.dataset.index))));
+        experience.querySelectorAll('.visual-panel').forEach(panel => {
+          panel.addEventListener('pointermove', event => {
+            const rect = panel.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 100;
+            const y = ((event.clientY - rect.top) / rect.height) * 100;
+            panel.style.setProperty('--mx', `${x}%`);
+            panel.style.setProperty('--my', `${y}%`);
+          });
+        });
+      }
+
+      function setBackground(gate) {
+        const target = bgFlip ? bgA : bgB;
+        const previous = bgFlip ? bgB : bgA;
+        target.style.backgroundImage = gate.bg;
+        target.classList.add('active');
+        previous.classList.remove('active');
+        bgFlip = !bgFlip;
+      }
+
+      function updateProgress() {
+        const pct = ((currentGate + 1) / CONFIG.gates.length) * 100;
+        progressBar.style.width = `${pct}%`;
+      }
+
+      function goToGate(index) {
+        const clamped = Math.max(0, Math.min(CONFIG.gates.length - 1, index));
+        if (clamped === currentGate || isTransitioning) return;
+        isTransitioning = true;
+
+        const gates = [...experience.querySelectorAll('.gate')];
+        const dots = [...gateRail.querySelectorAll('.gate-dot')];
+        gates[currentGate]?.classList.remove('active');
+        dots[currentGate]?.classList.remove('active');
+
+        currentGate = clamped;
+        window.scrollTo({ top: 0 });
+        setBackground(CONFIG.gates[currentGate]);
+        updateProgress();
+        document.getElementById('chapterHint').classList.toggle('done', currentGate === CONFIG.gates.length - 1);
+        updateThreeScene(currentGate);
+        playGateCue(currentGate);
+        playGateTrack(currentGate);
+
+        window.setTimeout(() => {
+          gates[currentGate]?.classList.add('active');
+          dots[currentGate]?.classList.add('active');
+          isTransitioning = false;
+        }, prefersReducedMotion ? 0 : 140);
+      }
+
+      function atBottom() { return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 6; }
+      function atTop() { return window.scrollY <= 6; }
+
+      function nextGate() { goToGate(currentGate + 1); }
+      function prevGate() { goToGate(currentGate - 1); }
+
+      nextGateBtn.addEventListener('click', nextGate);
+      document.getElementById('chapterHint').addEventListener('click', nextGate);
+      prevGateBtn.addEventListener('click', prevGate);
+
+      window.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') nextGate();
+        if (event.key === 'ArrowUp' || event.key === 'PageUp') prevGate();
+      });
+
+      window.addEventListener('wheel', event => {
+        if (document.body.classList.contains('locked')) return;
+        if (wheelLock) return;
+        wheelLock = true;
+        if (event.deltaY > 8 && atBottom()) nextGate();
+        if (event.deltaY < -8 && atTop()) prevGate();
+        setTimeout(() => { wheelLock = false; }, 760);
+      }, { passive: true });
+
+      window.addEventListener('touchstart', event => {
+        touchStartY = event.touches[0].clientY;
+      }, { passive: true });
+
+      window.addEventListener('touchend', event => {
+        const endY = event.changedTouches[0].clientY;
+        const delta = touchStartY - endY;
+        if (Math.abs(delta) > 54) {
+          if (delta > 0 && atBottom()) nextGate();
+          if (delta < 0 && atTop()) prevGate();
+        }
+      }, { passive: true });
+
+      enterBtn.addEventListener('click', () => {
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        loader.classList.add('blooming');
+        setTimeout(() => loader.classList.add('hidden'), reduce ? 0 : 650);
+        document.body.classList.remove('locked');
+        initAudioAfterGesture();
+        if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+        try { if (localStorage.getItem('echoes.sound') === 'off') { soundEnabled = false; soundToggle.setAttribute('aria-pressed', 'false'); soundToggle.textContent = '♪'; } else localStorage.setItem('echoes.sound', 'on'); } catch (e) {}
+        if (soundEnabled) startAmbient();
+        playGateCue(0);
+        playGateTrack(0);
+        const start = GATE_LINKS[location.hash];
+        if (start !== undefined) setTimeout(() => goToGate(start), 400);
+      });
+
+      /* --------------------------------------------------
+         AUDIO: generated with Web Audio, no external files.
+         Sound starts only after interaction.
+      -------------------------------------------------- */
+      let audioCtx = null;
+      let master = null;
+      let ambientNodes = [];
+      let soundEnabled = true;   // sound on by default; 'Enter the Gallery' is the tap browsers need
+
+      function initAudioAfterGesture() {
+        if (audioCtx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        audioCtx = new AudioContext();
+        master = audioCtx.createGain();
+        master.gain.value = 0.0;
+        master.connect(audioCtx.destination);
+      }
+
+      /* Singing bowl: a real recording placed at audio/singing-bowl.mp3 plays throughout,
+         struck again every BOWL_EVERY seconds. If the file is missing, the soft generated drone plays instead. */
+      const BOWL_FILE = 'audio/singing-bowl.mp3';
+      const BOWL_EVERY = 16;
+      let bowlBuffer = null, bowlTimer = null, bowlTried = false;
+      function loadBowl() {
+        if (bowlTried) return Promise.resolve(bowlBuffer);
+        bowlTried = true;
+        return fetch(BOWL_FILE).then(r => r.ok ? r.arrayBuffer() : Promise.reject())
+          .then(ab => new Promise((res, rej) => audioCtx.decodeAudioData(ab, res, rej)))
+          .then(b => (bowlBuffer = b)).catch(() => null);
+      }
+      /* Gate tracks: a looping piece of music for particular gates. The bowl rests while one plays. */
+      // The meditation tone plays on every gate. Accents alternate: gong on one gate, singing bowl on the next.
+      const LAYERS = [['audio/books-ambient.mp3', 0.85]];
+      // Accents over the melody alternate gate by gate: gong, bowl, gong, bowl... and the candle gate always has the bowl.
+      const GONG = 'audio/gong.mp3', BOWL = 'audio/singing-bowl.mp3', FINAL = 'audio/until-we-meet-again.mp3', GONG_EVERY = 20000; let gongTimer = null;
+      const accentFor = i => (i === 2 || i % 2 === 1) ? BOWL : GONG;
+      function strikeGong() {
+        if (!trackOn || !audioCtx) return;
+        const f = accentFor(currentGate);
+        loadTrack(f).then(b => { if (!b || !trackOn) return; const s = audioCtx.createBufferSource(), g = audioCtx.createGain(); s.buffer = b; g.gain.value = f === BOWL ? 0.36 : 0.45; s.connect(g); g.connect(master); s.start(); });
+      }
+      const trackBufs = {}; let trackNodes = [], trackOn = false;
+      function loadTrack(f) {
+        if (trackBufs[f] !== undefined) return Promise.resolve(trackBufs[f]);
+        return fetch(f).then(r => r.ok ? r.arrayBuffer() : Promise.reject())
+          .then(ab => new Promise((res, rej) => audioCtx.decodeAudioData(ab, res, rej)))
+          .then(b => (trackBufs[f] = b)).catch(() => (trackBufs[f] = null));
+      }
+      function stopTrack() {
+        trackOn = false;
+        if (!audioCtx) { trackNodes = []; return; }
+        const t = audioCtx.currentTime;
+        trackNodes.forEach(([src, g]) => { g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0.0001, t + 1.6); try { src.stop(t + 1.7); } catch (e) {} });
+        trackNodes = [];
+        clearInterval(gongTimer); gongTimer = null;
+      }
+      Object.defineProperty(window, '__echoTrack', { get: () => trackNodes.length });
+      let trackSrc = null;                                  // kept for the bowl check below
+      function playGateTrack(i) {
+        if (!audioCtx || !soundEnabled) return;
+        clearInterval(window.__candleBowl);
+        if (i === 2) {                                     // candle gate: melody fades away, only the singing bowl rings
+          stopTrack();
+          const ring = () => { if (currentGate !== 2 || !soundEnabled) return; loadTrack(BOWL).then(b => { if (!b) return; const s = audioCtx.createBufferSource(), g = audioCtx.createGain(); s.buffer = b; g.gain.value = 0.5; s.connect(g); g.connect(master); s.start(); }); };
+          setTimeout(ring, 1800); window.__candleBowl = setInterval(ring, 18000);
+          return;
+        }
+        if (i === CONFIG.gates.length - 1) {               // final gate: its own piece, looping with a breath between
+          stopTrack();
+          loadTrack(FINAL).then(b => {
+            if (!b || currentGate !== CONFIG.gates.length - 1 || !soundEnabled || trackNodes.length) return;
+            const t = audioCtx.currentTime, src = audioCtx.createBufferSource(), g = audioCtx.createGain();
+            src.buffer = b; src.loop = true;
+            g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.9, t + 2);
+            src.connect(g); g.connect(master); src.start(t + 0.6);
+            trackNodes.push([src, g]);
+          });
+          return;
+        }
+        if (trackOn) { clearTimeout(window.__accentSoon); window.__accentSoon = setTimeout(strikeGong, 1500); return; }   // melody carries on; the new gate's accent rings
+        trackOn = true; trackSrc = true;
+        Promise.all(LAYERS.map(([f]) => loadTrack(f))).then(bufs => {
+          if (!trackOn || !soundEnabled || trackNodes.length) return;
+          const t = audioCtx.currentTime;
+          bufs.forEach((buf, k) => {
+            if (!buf) return;
+            const src = audioCtx.createBufferSource(), g = audioCtx.createGain();
+            src.buffer = buf; src.loop = true;
+            g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(LAYERS[k][1], t + 3);
+            src.connect(g); g.connect(master); src.start(t + k * 0.4);
+            trackNodes.push([src, g]);
+          });
+          clearInterval(gongTimer); setTimeout(strikeGong, 4000); gongTimer = setInterval(strikeGong, GONG_EVERY);
+        });
+      }
+
+      function strikeBowl() {
+        if (!audioCtx || !bowlBuffer || !soundEnabled || trackOn) return;
+        const src = audioCtx.createBufferSource(), g = audioCtx.createGain();
+        src.buffer = bowlBuffer; g.gain.value = 0.55;
+        src.connect(g); g.connect(master); src.start();
+      }
+      function startBowl() {
+        clearInterval(bowlTimer);
+        strikeBowl();
+        bowlTimer = setInterval(strikeBowl, BOWL_EVERY * 1000);
+      }
+
+      function startAmbient() {
+        if (!audioCtx) return;
+        loadBowl().then(b => {
+          if (b) { master.gain.cancelScheduledValues(audioCtx.currentTime); master.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 1.2); startBowl(); }
+          else startDrone();
+        });
+      }
+
+      function startDrone() {
+        if (!audioCtx) return;
+        if (ambientNodes.length) { master.gain.cancelScheduledValues(audioCtx.currentTime); master.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 1.2); return; }
+        const base = [55, 82.41, 110];
+        base.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          const filter = audioCtx.createBiquadFilter();
+          osc.type = i === 0 ? 'sine' : 'triangle';
+          osc.frequency.value = freq;
+          filter.type = 'lowpass';
+          filter.frequency.value = 360 + i * 90;
+          gain.gain.value = 0.018 / (i + 1);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(master);
+          osc.start();
+          ambientNodes.push(osc, gain, filter);
+        });
+        master.gain.cancelScheduledValues(audioCtx.currentTime);
+        master.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 1.6);
+      }
+
+      function stopAmbient() {
+        if (!audioCtx || !master) return;
+        clearInterval(bowlTimer);
+        master.gain.cancelScheduledValues(audioCtx.currentTime);
+        master.gain.linearRampToValueAtTime(0.0, audioCtx.currentTime + 0.8);
+      }
+
+      function playGateCue(index) {
+        if (!audioCtx || !master || !soundEnabled) return;
+        const now = audioCtx.currentTime;
+        const notes = [220, 246.94, 261.63, 329.63, 392, 440, 523.25, 659.25, 783.99, 880];
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(notes[index] || 440, now);
+        osc.frequency.exponentialRampToValueAtTime((notes[index] || 440) * 1.012, now + 1.2);
+        filter.type = 'lowpass';
+        filter.frequency.value = 1600;
+        gain.gain.setValueAtTime(0.0, now);
+        gain.gain.linearRampToValueAtTime(index === 9 ? 0.08 : 0.045, now + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + (index === 9 ? 2.8 : 1.4));
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(master);
+        osc.start(now);
+        osc.stop(now + (index === 9 ? 3.1 : 1.6));
+      }
+
+      soundToggle.addEventListener('click', async () => {
+        initAudioAfterGesture();
+        if (!audioCtx) return;
+        if (audioCtx.state === 'suspended') await audioCtx.resume();
+        soundEnabled = !soundEnabled;
+        soundToggle.setAttribute('aria-pressed', String(soundEnabled));
+        soundToggle.textContent = soundEnabled ? '♫' : '♪';
+        try { localStorage.setItem('echoes.sound', soundEnabled ? 'on' : 'off'); } catch {}
+        if (soundEnabled) {
+          startAmbient();
+          playGateCue(currentGate);
+          playGateTrack(currentGate);
+        } else {
+          stopTrack(); trackSrc = null; clearInterval(window.__candleBowl);
+          stopAmbient();
+        }
+      });
+
+      /* --------------------------------------------------
+         THREE.JS BACKGROUND
+      -------------------------------------------------- */
+      let scene, camera, renderer, particles, sculpture, orbLight;
+      let mouse = { x: 0, y: 0 };
+
+      function initThree() {
+        if (!window.THREE) return;
+        const canvas = document.getElementById('three-canvas');
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 7;
+
+        renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        const particleCount = window.innerWidth < 700 ? 520 : 980;
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        const sizes = new Float32Array(particleCount);
+
+        for (let i = 0; i < particleCount; i++) {
+          positions[i * 3] = (Math.random() - 0.5) * 18;
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 12;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * 9;
+          sizes[i] = Math.random() * 1.8 + 0.45;
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        // round, soft orbs (a plain points material draws squares)
+        const dot = document.createElement('canvas'); dot.width = dot.height = 64;
+        const dg = dot.getContext('2d'), grad = dg.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, 'rgba(255,255,255,1)'); grad.addColorStop(.22, 'rgba(255,250,235,.85)');
+        grad.addColorStop(.5, 'rgba(240,226,190,.25)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
+        dg.fillStyle = grad; dg.beginPath(); dg.arc(32, 32, 32, 0, Math.PI * 2); dg.fill();
+        const orbTex = new THREE.CanvasTexture(dot);
+        const material = new THREE.PointsMaterial({
+          color: 0xf3ead6,
+          size: 0.05,
+          map: orbTex,
+          alphaTest: 0.01,
+          transparent: true,
+          opacity: 0.8,
+          depthWrite: false,
+          blending: THREE.AdditiveBlending
+        });
+
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        const sculptureGeometry = new THREE.IcosahedronGeometry(1.08, 2);
+        const sculptureMaterial = new THREE.MeshStandardMaterial({
+          color: 0xe6e9f0,
+          metalness: 0.45,
+          roughness: 0.28,
+          transparent: true,
+          opacity: 0.17,
+          wireframe: true
+        });
+        sculpture = new THREE.Mesh(sculptureGeometry, sculptureMaterial);
+        sculpture.position.set(2.4, -0.1, -1.2);
+        scene.add(sculpture);
+
+        const ambient = new THREE.AmbientLight(0xdfe6f2, 0.8);
+        scene.add(ambient);
+        orbLight = new THREE.PointLight(0xcfdcf2, 1.25, 9);
+        orbLight.position.set(-2.2, 1.8, 2.8);
+        scene.add(orbLight);
+
+        window.addEventListener('pointermove', event => {
+          mouse.x = (event.clientX / window.innerWidth - 0.5) * 2;
+          mouse.y = (event.clientY / window.innerHeight - 0.5) * 2;
+        }, { passive: true });
+
+        window.addEventListener('resize', resizeThree, { passive: true });
+        animateThree();
+      }
+
+      function resizeThree() {
+        if (!renderer || !camera) return;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+      }
+
+      function updateThreeScene(index) {
+        if (!window.THREE || !particles || !sculpture || !orbLight) return;
+        const gate = CONFIG.gates[index];
+        const color = new THREE.Color(gate.palette[2] || '#CED4E0');
+        particles.material.color.copy(color);
+        sculpture.material.color.copy(color);
+        orbLight.color.copy(color);
+        sculpture.position.x = index % 2 === 0 ? 2.4 : -2.25;
+        sculpture.position.y = ((index % 3) - 1) * 0.35;
+        particles.material.size = 0.022 + index * 0.0015;
+      }
+
+      function animateThree() {
+        if (!renderer || !scene || !camera) return;
+        requestAnimationFrame(animateThree);
+        const t = performance.now() * 0.00032;
+        if (particles) {
+          particles.rotation.y = t * 0.45 + mouse.x * 0.045;
+          particles.rotation.x = Math.sin(t) * 0.045 + mouse.y * 0.035;
+          particles.position.y = Math.sin(t * 1.7) * 0.06;
+        }
+        if (sculpture) {
+          sculpture.rotation.x += 0.0022;
+          sculpture.rotation.y += 0.0038;
+          sculpture.position.z = -1.2 + Math.sin(t * 4) * 0.22;
+        }
+        camera.position.x += (mouse.x * 0.22 - camera.position.x) * 0.035;
+        camera.position.y += (-mouse.y * 0.16 - camera.position.y) * 0.035;
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+      }
+
+      function boot() {
+        buildGates();
+        setBackground(CONFIG.gates[0]);
+        updateProgress();
+        const waitForThree = () => {
+          if (window.THREE) {
+            initThree();
+            updateThreeScene(0);
+          } else {
+            setTimeout(waitForThree, 60);
+          }
+        };
+        waitForThree();
+
+        // Hide loader automatically for keyboard users who tab to the button.
+        // (no auto-focus: it drew a ring around the gold button)
+      }
+
+      boot();
+    })();
+  </script>
+
+  <script>
+    (() => {
+      'use strict';
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* echo touch */
+      const layer = document.getElementById('echoLayer');
+      if (layer && !reduce) {
+        let live = 0;
+        window.addEventListener('pointerdown', e => {
+          if (e.target.closest('input, textarea, select') || live > 8) return;
+          ['', ' b'].forEach(c => {
+            const r = document.createElement('span');
+            r.className = 'echo-ring' + c; r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
+            layer.appendChild(r); live++;
+            r.addEventListener('animationend', () => { r.remove(); live--; });
+          });
+        }, { passive: true });
+      }
+
+      /* whispered lines */
+      const W = document.getElementById('whispers');
+      const LINES = [
+        'Love does not end. It changes form.',
+        'Some voices stay in the room long after.',
+        'You are allowed to still talk to them.',
+        'Every memory is a door left open.',
+        'They are in the songs you cannot skip.',
+        'The light they left is still travelling.',
+        'Missing them is how love keeps its shape.',
+        'Remembering is a way of holding on, gently.'
+      ];
+      if (W && !reduce) {
+        let i = Math.floor(Math.random() * LINES.length);
+        const spots = [[6, 12], [58, 9], [8, 78], [60, 84], [4, 46], [70, 50]];
+        let lastSpot = -1;
+        const whisper = () => {
+          if (document.hidden || document.body.classList.contains('locked')) return;
+          let k; do { k = Math.floor(Math.random() * spots.length); } while (k === lastSpot); lastSpot = k;
+          const el = document.createElement('div');
+          el.className = 'whisper'; el.textContent = LINES[i++ % LINES.length];
+          el.style.left = spots[k][0] + 'vw'; el.style.top = spots[k][1] + 'vh';
+          W.appendChild(el);
+          requestAnimationFrame(() => requestAnimationFrame(() => el.classList.add('on')));
+          setTimeout(() => el.classList.remove('on'), 6500);
+          setTimeout(() => el.remove(), 9500);
+        };
+        setTimeout(whisper, 4000);
+        setInterval(whisper, 11000);
+      }
+
+      /* light a candle */
+      const API = '/.netlify/functions/candles';
+      const MINE = 'echoes.myCandles';
+      const store = { get() { try { return JSON.parse(localStorage.getItem(MINE) || '[]'); } catch { return []; } },
+                      set(v) { try { localStorage.setItem(MINE, JSON.stringify(v.slice(-30))); } catch {} } };
+      const clean = t => String(t || '').replace(/[^\p{L}\p{M}' .-]/gu, '').replace(/\s+/g, ' ').trim().slice(0, 30);
+      const hash = str => { let h = 2166136261; for (const c of str) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return (h >>> 0); };
+      let shared = [], online = false;
+
+      function place(sky, c, mine, isNew) {
+        const h = hash((c.n || '') + c.t);
+        const x = 6 + (h % 880) / 10, y = 34 + ((h >>> 10) % 560) / 10;
+        const el = document.createElement('span');
+        el.className = 'candle' + (mine ? ' mine' : '') + (isNew ? ' new' : '');
+        el.style.left = x + '%'; el.style.top = y + '%';
+        el.innerHTML = '<i class="halo"></i><b class="wax"></b><b class="wick"></b><i class="flame"></i>';
+        const f = el.querySelector('.flame'), hl = el.querySelector('.halo');
+        f.style.animationDuration = (1.5 + (h % 900) / 1000) + 's'; f.style.animationDelay = (-(h % 2600)) + 'ms';
+        hl.style.animationDuration = (2.2 + ((h >>> 5) % 1200) / 1000) + 's'; hl.style.animationDelay = (-(h % 3000)) + 'ms';
+        el.dataset.n = c.n || 'Someone dear';
+        sky.appendChild(el);
+      }
+      function render(newT) {
+        const sky = document.getElementById('candleSky'); if (!sky) return;
+        sky.innerHTML = '<span class="candle-tip" id="candleTip"></span>';
+        const mine = store.get();
+        const mineT = new Set(mine.map(m => m.t));
+        const all = online ? shared : mine;
+        const seen = new Set();
+        all.concat(mine).forEach(c => { const key = c.t + '|' + c.n; if (seen.has(key)) return; seen.add(key); place(sky, c, mineT.has(c.t), c.t === newT); });
+        const note = document.getElementById('candleNote');
+        if (note) note.textContent = online
+          ? (all.length ? `${all.length} ${all.length === 1 ? 'light has' : 'lights have'} been lit here in remembrance.` : 'Be the first to light a candle here.')
+          : (mine.length ? 'Your candles are kept here on this device.' : 'Light a candle for someone you carry with you.');
+      }
+      function bind() {
+        const form = document.getElementById('candleForm'), sky = document.getElementById('candleSky');
+        if (!form || !sky) return;
+        sky.addEventListener('pointerover', e => { const c = e.target.closest('.candle'); const tip = document.getElementById('candleTip'); if (!c || !tip) return;
+          tip.textContent = c.dataset.n; tip.style.left = c.style.left; tip.style.top = c.style.top; tip.classList.add('on'); });
+        sky.addEventListener('pointerout', () => document.getElementById('candleTip')?.classList.remove('on'));
+        form.addEventListener('submit', async e => {
+          e.preventDefault();
+          const input = document.getElementById('candleName');
+          const c = { n: clean(input.value) || 'Someone dear', t: Date.now() };
+          const mine = store.get(); mine.push(c); store.set(mine);
+          input.value = '';
+          if (online) {
+            try { const r = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ n: c.n }) });
+                  if (r.ok) { const d = await r.json(); shared = d.candles || shared; const last = shared[shared.length - 1]; if (last) { mine[mine.length - 1].t = last.t; store.set(mine); c.t = last.t; } } } catch {}
+          }
+          render(c.t);
+        });
+        fetch(API).then(r => r.ok ? r.json() : Promise.reject()).then(d => { online = true; shared = d.candles || []; render(); }).catch(() => render());
+        render();
+      }
+      const wait = setInterval(() => { if (document.getElementById('candleForm')) { clearInterval(wait); bind(); } }, 300);
+    })();
+  </script>
+
+  
+
+  <script>
+    (() => {
+      const cv = document.querySelector('.sigil .diamond-inf'); if (!cv) return;
+      const x = cv.getContext('2d'), dpr = Math.min(3, window.devicePixelRatio || 1);
+      const W = 140, H = 140, CX = 70, CY = 70; cv.width = W * dpr; cv.height = H * dpr; x.scale(dpr, dpr);
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const rnd = Math.random;
+      // the infinity sign
+      const INF = [];
+      for (let i = 0, N = 420; i < N; i++) {
+        const t = (i / N) * Math.PI * 2, den = 1 + Math.sin(t) ** 2;
+        const px = Math.cos(t) / den, py = Math.sin(t) * Math.cos(t) / den;
+        const t2 = t + 0.01, d2 = 1 + Math.sin(t2) ** 2;
+        const nx = -(Math.sin(t2) * Math.cos(t2) / d2 - py), ny = (Math.cos(t2) / d2 - px), nl = Math.hypot(nx, ny) || 1;
+        const off = (rnd() - .5) * 0.085;
+        INF.push({ x: px + nx / nl * off, y: py + ny / nl * off, z: (rnd() - .5) * 0.25, s: 0.55 + rnd() * 0.95, ph: rnd() * 6.28, sp: 0.8 + rnd() * 2.2, rot: rnd() * 3.14 });
+      }
+      // rings: outer solid circle, dashed middle circle (turns), inner rounded diamond (turns the other way)
+      function ring(r, n, opts) {
+        const out = [];
+        for (let i = 0; i < n; i++) {
+          const a = (i / n) * Math.PI * 2;
+          if (opts.dash && Math.floor(i / opts.dash) % 2) continue;
+          out.push({ a, r: r + (rnd() - .5) * (opts.jit || 1.2), s: opts.s0 + rnd() * opts.s1, ph: rnd() * 6.28, sp: 0.7 + rnd() * 2, rot: rnd() * 3.14 });
+        }
+        return out;
+      }
+      const OUTER = ring(55, 300, { s0: .55, s1: .9, jit: 1.6 });
+      const DASH = ring(43, 220, { s0: .45, s1: .6, jit: .8 });
+      const INNER = [];
+      for (let i = 0, n = 150; i < n; i++) {             // rounded square rotated 45°, like the original
+        const a = (i / n) * Math.PI * 2, c = Math.cos(a), s2 = Math.sin(a);
+        const k = 27 / Math.pow(Math.pow(Math.abs(c), 4) + Math.pow(Math.abs(s2), 4), 0.25);
+        INNER.push({ a, r: k + (rnd() - .5) * .8, s: .45 + rnd() * .55, ph: rnd() * 6.28, sp: 0.7 + rnd() * 2, rot: rnd() * 3.14 });
+      }
+      function diamond(cx, cy, r, a, light, gold) {
+        x.save(); x.translate(cx, cy); x.rotate(a);
+        const g = x.createLinearGradient(-r, -r, r, r);
+        if (gold) { g.addColorStop(0, `rgba(255,248,220,${light})`); g.addColorStop(.5, `rgba(240,${200 + 40 * light|0},${120 + 60 * light|0},${.55 + .45 * light})`); g.addColorStop(1, `rgba(190,140,60,${.5 + .4 * light})`); }
+        else { g.addColorStop(0, `rgba(255,255,255,${light})`); g.addColorStop(.5, `rgba(${180 + 60 * light|0},${196 + 50 * light|0},230,${.55 + .45 * light})`); g.addColorStop(1, `rgba(140,160,205,${.5 + .4 * light})`); }
+        x.fillStyle = g; x.beginPath(); x.moveTo(0, -r); x.lineTo(r * .7, 0); x.lineTo(0, r); x.lineTo(-r * .7, 0); x.closePath(); x.fill();
+        x.restore();
+      }
+      function glint(cx, cy, r, a) {
+        x.save(); x.globalAlpha = Math.min(1, a); x.strokeStyle = '#fff'; x.lineWidth = .6; x.beginPath();
+        x.moveTo(cx - r, cy); x.lineTo(cx + r, cy); x.moveTo(cx, cy - r); x.lineTo(cx, cy + r); x.stroke(); x.restore();
+      }
+      function drawRing(list, spin, t, sweep, gold) {
+        for (const d of list) {
+          const a = d.a + spin, X = CX + Math.cos(a) * d.r, Y = CY + Math.sin(a) * d.r;
+          const tw = 0.5 + 0.5 * Math.sin(t * d.sp + d.ph);
+          const lit = 0.5 + 0.5 * Math.cos(a - sweep);               // a band of light travels round each ring
+          const light = Math.min(1, 0.2 + 0.45 * tw + 0.45 * Math.pow(lit, 6));
+          diamond(X, Y, d.s, d.rot + t * .3, light, gold);
+          if (light > 0.95) glint(X, Y, d.s * 3, (light - 0.95) * 14);
+        }
+      }
+      function frame(now) {
+        const t = now / 1000;
+        x.clearRect(0, 0, W, H);
+        drawRing(OUTER, reduce ? 0 : t * 0.05, t, t * 1.2, true);
+        drawRing(DASH, reduce ? 0 : t * 0.13, t, -t * 0.9, false);
+        drawRing(INNER, reduce ? 0 : -t * 0.09, t, t * 1.5, false);
+        const ph = t / 4.5, k = Math.floor(ph), f = ph - k, sm = f * f * f * (f * (f * 6 - 15) + 10);
+        const turn = reduce ? 0 : Math.PI * (k + sm), c = Math.cos(turn), sn = Math.sin(turn);
+        const order = INF.map((d, i) => [d.x * sn + d.z * c, i]).sort((p, q) => p[0] - q[0]);
+        for (const [, i] of order) {
+          const d = INF[i];
+          const X = CX + (d.x * c - d.z * sn) * 29, Y = CY + d.y * 44;
+          const facing = 0.5 + 0.5 * Math.cos(turn * 2 + d.ph), tw = 0.5 + 0.5 * Math.sin(t * d.sp + d.ph);
+          const light = Math.min(1, 0.25 + 0.5 * facing * tw + 0.25 * tw);
+          diamond(X, Y, d.s, d.rot + t * 0.3, light, false);
+          if (light > 0.93) glint(X, Y, d.s * 3.2, (light - 0.93) * 12);
+        }
+        if (!reduce) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    })();
+  </script>
+
+  <script>
+    (() => {
+      // The eternal circle: rings of gold and silver diamonds with a light that travels round forever.
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const rnd = Math.random;
+      function setup(cv) {
+        const x = cv.getContext('2d'); let S = 0, dpr = 1;
+        function size() { dpr = Math.min(2.5, window.devicePixelRatio || 1); S = cv.clientWidth; cv.width = S * dpr; cv.height = S * dpr; x.setTransform(dpr, 0, 0, dpr, 0, 0); }
+        size(); new ResizeObserver(size).observe(cv);
+        const ring = (r, n, w, s0, s1, gold) => Array.from({ length: n }, (_, i) => ({ a: i / n * Math.PI * 2 + rnd() * .01, r: r + (rnd() - .5) * w, s: s0 + rnd() * s1, ph: rnd() * 6.28, sp: .7 + rnd() * 2, rot: rnd() * 3.14, gold }));
+        const R1 = ring(.40, 520, .035, .7, 1.4, true), R2 = ring(.33, 300, .015, .5, .9, false), R3 = ring(.46, 220, .01, .4, .7, false);
+        function diamond(cx, cy, r, a, L, gold) {
+          x.save(); x.translate(cx, cy); x.rotate(a);
+          const g = x.createLinearGradient(-r, -r, r, r);
+          if (gold) { g.addColorStop(0, `rgba(255,248,220,${L})`); g.addColorStop(.5, `rgba(240,${200 + 40 * L | 0},${120 + 60 * L | 0},${.5 + .5 * L})`); g.addColorStop(1, `rgba(190,140,60,${.45 + .45 * L})`); }
+          else { g.addColorStop(0, `rgba(255,255,255,${L})`); g.addColorStop(.5, `rgba(${185 + 60 * L | 0},${198 + 50 * L | 0},232,${.5 + .5 * L})`); g.addColorStop(1, `rgba(140,160,205,${.45 + .4 * L})`); }
+          x.fillStyle = g; x.beginPath(); x.moveTo(0, -r); x.lineTo(r * .7, 0); x.lineTo(0, r); x.lineTo(-r * .7, 0); x.closePath(); x.fill(); x.restore();
+        }
+        function draw(list, spin, t, head) {
+          const C = S / 2;
+          for (const d of list) {
+            const a = d.a + spin, X = C + Math.cos(a) * d.r * S, Y = C + Math.sin(a) * d.r * S;
+            let gap = ((head - a) % (Math.PI * 2) + Math.PI * 4) % (Math.PI * 2);   // distance behind the travelling light
+            const trail = gap < 1.6 ? Math.pow(1 - gap / 1.6, 2) : 0;
+            const tw = .5 + .5 * Math.sin(t * d.sp + d.ph);
+            const L = Math.min(1, .18 + .4 * tw + .9 * trail);
+            diamond(X, Y, d.s * (S / 300) * (1 + trail * .6), d.rot + t * .3, L, d.gold);
+            if (L > .95) { x.save(); x.globalAlpha = (L - .95) * 14; x.strokeStyle = '#fff'; x.lineWidth = .6; const r = d.s * 3 * (S / 300);
+              x.beginPath(); x.moveTo(X - r, Y); x.lineTo(X + r, Y); x.moveTo(X, Y - r); x.lineTo(X, Y + r); x.stroke(); x.restore(); }
+          }
+        }
+        function frame(now) {
+          const t = now / 1000; x.clearRect(0, 0, S, S);
+          const head = reduce ? 0 : t * 0.9;
+          draw(R3, reduce ? 0 : -t * .04, t, -head * 0.7);
+          draw(R2, reduce ? 0 : t * .07, t, head * 1.3 + 2);
+          draw(R1, reduce ? 0 : t * .03, t, head);
+          // the travelling light itself
+          const C = S / 2, hx = C + Math.cos(head + (reduce ? 0 : t * .03)) * .40 * S, hy = C + Math.sin(head + (reduce ? 0 : t * .03)) * .40 * S;
+          const g = x.createRadialGradient(hx, hy, 0, hx, hy, S * .06); g.addColorStop(0, 'rgba(255,250,230,.95)'); g.addColorStop(.4, 'rgba(255,220,150,.45)'); g.addColorStop(1, 'rgba(255,200,120,0)');
+          x.fillStyle = g; x.beginPath(); x.arc(hx, hy, S * .06, 0, 7); x.fill();
+          if (!reduce) requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+      }
+      const wait = setInterval(() => { const cv = document.querySelector('.eternal-cv'); if (cv && cv.clientWidth) { clearInterval(wait); setup(cv); } }, 300);
+    })();
+  </script>
+</body>
+</html>
