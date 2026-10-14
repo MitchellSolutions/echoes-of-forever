@@ -1558,6 +1558,7 @@
       prevGateBtn.addEventListener('click', prevGate);
 
       window.addEventListener('keydown', event => {
+        if (event.target.closest && event.target.closest('input, textarea, select, [contenteditable]')) return;   // typing a name never turns the page
         if (event.key === 'ArrowDown' || event.key === 'PageDown' || event.key === ' ') nextGate();
         if (event.key === 'ArrowUp' || event.key === 'PageUp') prevGate();
       });
@@ -1576,6 +1577,7 @@
       }, { passive: true });
 
       window.addEventListener('touchend', event => {
+        if (document.activeElement && document.activeElement.matches('input, textarea')) return;   // keyboard open: don't swipe gates
         const endY = event.changedTouches[0].clientY;
         const delta = touchStartY - endY;
         if (Math.abs(delta) > 54) {
