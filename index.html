@@ -1841,16 +1841,18 @@
         particles = new THREE.Points(geometry, material);
         scene.add(particles);
 
-        const sculptureGeometry = new THREE.IcosahedronGeometry(1.08, 2);
-        const sculptureMaterial = new THREE.MeshStandardMaterial({
-          color: 0xe6e9f0,
-          metalness: 0.45,
-          roughness: 0.28,
-          transparent: true,
-          opacity: 0.17,
-          wireframe: true
-        });
-        sculpture = new THREE.Mesh(sculptureGeometry, sculptureMaterial);
+        // faceted geometric heart, drawn as fine gold edges
+        const hs = new THREE.Shape();
+        hs.moveTo(0, -1.0);
+        hs.lineTo(-0.62, -0.32); hs.lineTo(-0.96, 0.18); hs.lineTo(-0.9, 0.58); hs.lineTo(-0.62, 0.82);
+        hs.lineTo(-0.28, 0.82); hs.lineTo(0, 0.56);
+        hs.lineTo(0.28, 0.82); hs.lineTo(0.62, 0.82); hs.lineTo(0.9, 0.58); hs.lineTo(0.96, 0.18); hs.lineTo(0.62, -0.32);
+        hs.lineTo(0, -1.0);
+        const heartGeo = new THREE.ExtrudeGeometry(hs, { depth: 0.34, bevelEnabled: true, bevelThickness: 0.22, bevelSize: 0.14, bevelSegments: 1, steps: 1 });
+        heartGeo.center();
+        sculpture = new THREE.LineSegments(new THREE.EdgesGeometry(heartGeo, 1),
+          new THREE.LineBasicMaterial({ color: 0xe8c46a, transparent: true, opacity: 0.32 }));
+        sculpture.scale.setScalar(1.15);
         sculpture.position.set(2.4, -0.1, -1.2);
         scene.add(sculpture);
 
@@ -1882,7 +1884,6 @@
         const gate = CONFIG.gates[index];
         const color = new THREE.Color(gate.palette[2] || '#CED4E0');
         particles.material.color.copy(color);
-        sculpture.material.color.copy(color);
         orbLight.color.copy(color);
         sculpture.position.x = index % 2 === 0 ? 2.4 : -2.25;
         sculpture.position.y = ((index % 3) - 1) * 0.35;
@@ -1899,8 +1900,8 @@
           particles.position.y = Math.sin(t * 1.7) * 0.06;
         }
         if (sculpture) {
-          sculpture.rotation.x += 0.0022;
-          sculpture.rotation.y += 0.0038;
+          sculpture.rotation.y = Math.sin(t * 1.6) * 0.75;      // turns gently side to side, never edge-on
+          sculpture.rotation.x = Math.sin(t * 1.1) * 0.12;
           sculpture.position.z = -1.2 + Math.sin(t * 4) * 0.22;
         }
         camera.position.x += (mouse.x * 0.22 - camera.position.x) * 0.035;
