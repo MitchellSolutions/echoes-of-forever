@@ -83,6 +83,9 @@
     }
 
     /* Background atmosphere */
+    /* the night sky: a soft milky way, thousands of tiny twinkling stars, the odd shooting star */
+    #sky { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -6; pointer-events: none; }
+
     #three-canvas {
       position: fixed;
       inset: 0;
@@ -869,6 +872,22 @@
       animation-duration: 31s;
     }
 
+
+    /* right-hand windows: a field of stars instead of orbit lines */
+    .panel-stars { position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 60% 35% at 30% 20%, rgba(150,120,220,.14), transparent 70%),
+                  radial-gradient(ellipse 55% 30% at 75% 85%, rgba(232,196,106,.12), transparent 70%),
+                  linear-gradient(115deg, transparent 30%, rgba(200,190,255,.06) 48%, rgba(255,230,180,.07) 52%, transparent 70%); }
+    .panel-stars .star { position: absolute; width: var(--s); height: var(--s); border-radius: 50%; background: #fff6dc;
+      box-shadow: 0 0 6px rgba(255,236,180,.9); animation: twinkle 4s ease-in-out infinite; }
+    .panel-stars .sparkle { position: absolute; width: var(--s); height: var(--s); transform: translate(-50%,-50%); animation: twinkle 5s ease-in-out infinite; }
+    .panel-stars .sparkle::before, .panel-stars .sparkle::after { content: ""; position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+      background: radial-gradient(closest-side, #fff8e2, rgba(232,196,106,.7) 40%, transparent); }
+    .panel-stars .sparkle::before { width: 100%; height: 2px; }
+    .panel-stars .sparkle::after { width: 2px; height: 100%; }
+    @keyframes twinkle { 0%,100% { opacity: .25; scale: .7; } 50% { opacity: 1; scale: 1; } }
+    @media (prefers-reduced-motion: reduce) { .panel-stars i { animation: none; opacity: .7; } }
+
     @keyframes rotateSlow {
       from { rotate: 0deg; }
       to { rotate: 360deg; }
@@ -1139,6 +1158,7 @@
       <div class="bg-layer active" id="bgA"></div>
       <div class="bg-layer" id="bgB"></div>
     </div>
+    <canvas id="sky" aria-hidden="true"></canvas>
     <canvas id="three-canvas" aria-hidden="true"></canvas>
     <div class="veil" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
@@ -1396,6 +1416,17 @@
         [28, 38, 12, 30, 2], [72, 39, 13, 34, 2], [50, 41, 12, 26, 1]
       ];
 
+      function panelStars(seed) {                       // a quiet field of twinkling stars and a few four-point sparkles
+        let h = 2166136261 ^ (seed * 977); const rnd = () => { h ^= h << 13; h ^= h >>> 17; h ^= h << 5; return ((h >>> 0) % 10000) / 10000; };
+        let out = '';
+        for (let k = 0; k < 110; k++) {
+          const big = k < 12, x = (4 + rnd() * 92).toFixed(1), y = (4 + rnd() * 92).toFixed(1);
+          const sz = big ? (14 + rnd() * 12).toFixed(0) : (1.8 + rnd() * 2.4).toFixed(1);
+          out += `<i class="${big ? 'sparkle' : 'star'}" style="left:${x}%;top:${y}%;--s:${sz}px;animation-duration:${(2.6 + rnd() * 4).toFixed(1)}s;animation-delay:-${(rnd() * 6).toFixed(1)}s"></i>`;
+        }
+        return out;
+      }
+
       function buildGates() {
         experience.innerHTML = CONFIG.gates.map((gate, index) => {
           const isGallery = index === 8;
@@ -1457,9 +1488,7 @@
                 ${finalCtas}
               </div>
               <aside class="visual-panel" style="--mx: 50%; --my: 50%;" aria-label="${gate.label}: ${gate.caption}">
-                <div class="orbital-ring"></div>
-                <div class="orbital-ring r2"></div>
-                <div class="orbital-ring r3"></div>
+                <div class="panel-stars">${panelStars(index)}</div>
                 ${index === 2 ? `<div class="vigil" aria-hidden="true"><i class="vigil-glow"></i>${VIGIL.map(([x,b,w,h,z],k)=>`<span class="vc" style="left:${x}%;bottom:${b}%;--w:${w}px;--h:${h}px;z-index:${z};--d:${(1.4+(k*37%9)/10).toFixed(2)}s;--o:-${(k*0.37%2).toFixed(2)}s"><i class="vc-halo"></i><i class="vc-flame"></i><b class="vc-wick"></b><b class="vc-wax"></b></span>`).join('')}<i class="vigil-floor"></i></div>` : ''}
                 ${index === 7 ? `<div class="eternal" aria-hidden="true"><i class="eternal-glow"></i><canvas class="eternal-cv"></canvas></div>` : ''}
                 ${index === 2 || index === 7 ? '' : index === 0 ? `<i class="dw-spill" aria-hidden="true"></i>
@@ -1841,19 +1870,36 @@
         particles = new THREE.Points(geometry, material);
         scene.add(particles);
 
-        // faceted geometric heart, drawn as fine gold edges
-        const hs = new THREE.Shape();
-        hs.moveTo(0, -1.0);
-        hs.lineTo(-0.62, -0.32); hs.lineTo(-0.96, 0.18); hs.lineTo(-0.9, 0.58); hs.lineTo(-0.62, 0.82);
-        hs.lineTo(-0.28, 0.82); hs.lineTo(0, 0.56);
-        hs.lineTo(0.28, 0.82); hs.lineTo(0.62, 0.82); hs.lineTo(0.9, 0.58); hs.lineTo(0.96, 0.18); hs.lineTo(0.62, -0.32);
-        hs.lineTo(0, -1.0);
-        const heartGeo = new THREE.ExtrudeGeometry(hs, { depth: 0.34, bevelEnabled: true, bevelThickness: 0.22, bevelSize: 0.14, bevelSegments: 1, steps: 1 });
-        heartGeo.center();
-        sculpture = new THREE.LineSegments(new THREE.EdgesGeometry(heartGeo, 1),
-          new THREE.LineBasicMaterial({ color: 0xe8c46a, transparent: true, opacity: 0.32 }));
-        sculpture.scale.setScalar(1.15);
-        sculpture.position.set(2.4, -0.1, -1.2);
+        // geometric heart: a lattice of fine gold lines over a heart-shaped body
+        const heartR = (() => {                                   // radius of the heart outline at each angle
+          const bins = new Array(360).fill(0);
+          for (let k = 0; k < 4000; k++) {
+            const t = k / 4000 * Math.PI * 2;
+            const x = 16 * Math.pow(Math.sin(t), 3) / 17, y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t) + 2.5) / 17;
+            const ang = Math.round((Math.atan2(y, x) * 180 / Math.PI + 360) % 360) % 360;
+            bins[ang] = Math.max(bins[ang], Math.hypot(x, y));
+          }
+          for (let i = 0; i < 360; i++) if (!bins[i]) bins[i] = bins[(i + 359) % 360];
+          return a => bins[Math.round(((a * 180 / Math.PI) % 360 + 360) % 360) % 360];
+        })();
+        const W = 30, H = 18, pts = [];
+        for (let j = 0; j <= H; j++) {
+          const v = j / H, phi = v * Math.PI;                     // pole to pole, through the depth of the heart
+          for (let i = 0; i <= W; i++) {
+            const th = i / W * Math.PI * 2;
+            const px = Math.cos(th), py = Math.sin(th), r = heartR(th) * Math.sin(phi);
+            pts.push(new THREE.Vector3(px * r, py * r, Math.cos(phi) * 0.42 * (0.6 + 0.4 * Math.sin(phi))));
+          }
+        }
+        const segs = [], at = (i, j) => pts[j * (W + 1) + i];
+        for (let j = 0; j <= H; j++) for (let i = 0; i < W; i++) {
+          if (j > 0 && j < H) segs.push(at(i, j), at(i + 1, j));                    // rings
+          if (j < H) { segs.push(at(i, j), at(i, j + 1)); if ((i + j) % 2 === 0) segs.push(at(i, j), at(i + 1, j + 1)); else segs.push(at(i + 1, j), at(i, j + 1)); }   // meridians + facets
+        }
+        sculpture = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(segs),
+          new THREE.LineBasicMaterial({ color: 0xe8c46a, transparent: true, opacity: 0.34 }));
+        sculpture.scale.setScalar(1.7);
+        sculpture.position.set(-2.25, 0, -1.2);
         scene.add(sculpture);
 
         const ambient = new THREE.AmbientLight(0xdfe6f2, 0.8);
@@ -1885,8 +1931,8 @@
         const color = new THREE.Color(gate.palette[2] || '#CED4E0');
         particles.material.color.copy(color);
         orbLight.color.copy(color);
-        sculpture.position.x = index % 2 === 0 ? 2.4 : -2.25;
-        sculpture.position.y = ((index % 3) - 1) * 0.35;
+        sculpture.position.x = innerWidth < 900 ? -1.2 : -2.6;                          // always behind the words, never over the picture window
+        sculpture.position.y = 0;
         particles.material.size = 0.022 + index * 0.0015;
       }
 
@@ -1927,6 +1973,108 @@
         // Hide loader automatically for keyboard users who tab to the button.
         // (no auto-focus: it drew a ring around the gold button)
       }
+
+      /* night sky */
+      (function () {
+        const cv = document.getElementById('sky'); if (!cv) return;
+        const cx = cv.getContext('2d'), reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        let W, H, stars = [], band, shoot = null, nextShoot = performance.now() + 5000;
+        function build() {
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          W = cv.width = Math.max(1, innerWidth) * dpr; H = cv.height = Math.max(1, innerHeight) * dpr;
+          const n = Math.max(0, Math.round(innerWidth * innerHeight / (innerWidth < 700 ? 1500 : 1100)));
+          stars = Array.from({ length: n }, () => {
+            const warm = Math.random() < .3;
+            return { x: Math.random() * W, y: Math.random() * H, r: (Math.random() ** 3 * 1.6 + .35) * dpr,
+                     a: .25 + Math.random() * .75, sp: .4 + Math.random() * 1.6, ph: Math.random() * 6.28,
+                     c: warm ? '255,226,170' : (Math.random() < .3 ? '205,215,255' : '255,250,240') };
+          });
+          // milky way band, drawn once
+          band = document.createElement('canvas'); band.width = W; band.height = H;
+          const b = band.getContext('2d');
+          b.translate(W * .5, H * .5); b.rotate(-0.42); b.scale(1, .22);
+          const g = b.createRadialGradient(0, 0, 0, 0, 0, Math.max(W, H) * .62);
+          g.addColorStop(0, 'rgba(255,232,190,.20)'); g.addColorStop(.35, 'rgba(170,150,230,.10)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+          b.fillStyle = g; b.fillRect(-W, -H * 4, W * 2, H * 8);
+          b.setTransform(1, 0, 0, 1, 0, 0);
+          for (let k = 0; k < n * .9; k++) {                       // dust packed along the band
+            const t = (Math.random() - .5) * 1.5, off = (Math.random() + Math.random() + Math.random() - 1.5) * .09;
+            const x = W * (.5 + t * Math.cos(-0.42)) - H * off * Math.sin(-0.42), y = H * .5 + W * t * Math.sin(-0.42) + H * off * Math.cos(-0.42);
+            b.fillStyle = `rgba(255,245,225,${(.15 + Math.random() * .35).toFixed(2)})`;
+            b.fillRect(x, y, dpr * .8, dpr * .8);
+          }
+        }
+        let clouds, cloudStars = [];
+        function buildClouds() {                                   // soft moonlit cloud banks that tile sideways so they can drift forever
+          const dpr = Math.min(devicePixelRatio || 1, 2);
+          if (!W || !H) { clouds = null; return; }                // page not laid out yet (e.g. a hidden frame): try again on resize
+          clouds = document.createElement('canvas'); clouds.width = W; clouds.height = H;
+          const c = clouds.getContext('2d'); cloudStars = [];
+          const bank = (yc, spread, count, tint) => {
+            for (let k = 0; k < count; k++) {
+              const x = Math.random() * W, y = yc + (Math.random() - .5) * spread * H, r = (60 + Math.random() * 170) * dpr * (innerWidth < 700 ? .6 : 1);
+              for (const dx of [-W, 0, W]) {
+                const g = c.createRadialGradient(x + dx, y, 0, x + dx, y, r);
+                g.addColorStop(0, `rgba(${tint},${(.05 + Math.random() * .06).toFixed(3)})`); g.addColorStop(1, `rgba(${tint},0)`);
+                c.fillStyle = g; c.beginPath(); c.arc(x + dx, y, r, 0, 6.283); c.fill();
+              }
+              if (Math.random() < .55) cloudStars.push({ x, y: y - r * .2 * Math.random(), r: (.6 + Math.random() * 1.3) * dpr, sp: .6 + Math.random() * 2, ph: Math.random() * 6.28 });
+            }
+            // a warm rim on the cloud tops, as if lit from above
+            const rim = c.createLinearGradient(0, yc - spread * H * .6, 0, yc);
+            rim.addColorStop(0, 'rgba(255,214,150,.0)'); rim.addColorStop(.5, 'rgba(255,214,150,.05)'); rim.addColorStop(1, 'rgba(255,214,150,0)');
+            c.globalCompositeOperation = 'source-atop'; c.fillStyle = rim; c.fillRect(0, yc - spread * H, W, spread * H); c.globalCompositeOperation = 'source-over';
+          };
+          bank(H * .9, .16, 70, '196,186,236');      // low bank along the bottom
+          bank(H * .72, .1, 34, '235,215,190');      // a warmer middle drift
+          bank(H * .22, .07, 16, '180,180,230');     // thin high wisps
+        }
+        let drift = 0;
+        function frame(now) {
+          cx.clearRect(0, 0, W, H);
+          cx.drawImage(band, 0, 0);
+          if (clouds) {
+            if (!reduce) drift = (drift + W / 9000) % W;                 // about a minute and a half to cross the screen
+            cx.drawImage(clouds, -drift, 0); cx.drawImage(clouds, W - drift, 0);
+            const t2 = now / 1000;
+            for (const s of cloudStars) {
+              let x = s.x - drift; if (x < 0) x += W;
+              const tw = reduce ? .8 : Math.max(0, Math.sin(t2 * s.sp + s.ph));
+              cx.globalAlpha = tw * .95; cx.fillStyle = '#fff4dc';
+              cx.beginPath(); cx.arc(x, s.y, s.r, 0, 6.283); cx.fill();
+              if (tw > .8) { cx.globalAlpha = (tw - .8) * 4; cx.fillRect(x - s.r * 6, s.y - .5, s.r * 12, 1); cx.fillRect(x - .5, s.y - s.r * 6, 1, s.r * 12); }
+            }
+            cx.globalAlpha = 1;
+          }
+          const t = now / 1000;
+          for (const s of stars) {
+            const tw = reduce ? 1 : .55 + .45 * Math.sin(t * s.sp + s.ph);
+            cx.globalAlpha = s.a * tw; cx.fillStyle = `rgb(${s.c})`;
+            cx.beginPath(); cx.arc(s.x, s.y, s.r, 0, 6.283); cx.fill();
+            if (s.r > 1.6 * (devicePixelRatio > 1 ? 2 : 1) && tw > .9) {        // the brightest catch a soft cross of light
+              cx.globalAlpha = s.a * (tw - .9) * 6; cx.fillRect(s.x - s.r * 5, s.y - .4, s.r * 10, .8); cx.fillRect(s.x - .4, s.y - s.r * 5, .8, s.r * 10);
+            }
+          }
+          cx.globalAlpha = 1;
+          if (!reduce) {
+            if (!shoot && now > nextShoot) {
+              shoot = { x: Math.random() * W * .7 + W * .2, y: Math.random() * H * .35, l: 0, life: 0, ang: Math.PI * (.78 + Math.random() * .1) };
+            }
+            if (shoot) {
+              shoot.life += 1; const sp = W / 70, len = W * .12;
+              const hx = shoot.x + Math.cos(shoot.ang) * sp * shoot.life, hy = shoot.y + Math.sin(shoot.ang) * sp * shoot.life;
+              const fade = Math.sin(Math.min(shoot.life / 38, 1) * Math.PI);
+              const gr = cx.createLinearGradient(hx, hy, hx - Math.cos(shoot.ang) * len, hy - Math.sin(shoot.ang) * len);
+              gr.addColorStop(0, `rgba(255,240,205,${.9 * fade})`); gr.addColorStop(1, 'rgba(255,240,205,0)');
+              cx.strokeStyle = gr; cx.lineWidth = 1.6; cx.beginPath(); cx.moveTo(hx, hy);
+              cx.lineTo(hx - Math.cos(shoot.ang) * len, hy - Math.sin(shoot.ang) * len); cx.stroke();
+              if (shoot.life > 38) { shoot = null; nextShoot = now + 7000 + Math.random() * 9000; }
+            }
+          }
+          requestAnimationFrame(frame);
+        }
+        build(); buildClouds(); addEventListener('resize', () => { build(); buildClouds(); }, { passive: true }); requestAnimationFrame(frame);
+      })();
 
       boot();
     })();
